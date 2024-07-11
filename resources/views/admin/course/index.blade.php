@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    <h2>Course</h2>
+    <h2>COURSES</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('admin.course.create') }}" class="btn btn-primary">Add New Course</a>
         <form method="GET" action="{{ route('admin.course.index') }}" id="search-form" class="d-flex align-items-center">

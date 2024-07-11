@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>Schedule</h2>
+    <h2>SCHEDULE</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('admin.schedule.create') }}" class="btn btn-primary">Add New Schedule</a>
         <a href="{{ route('admin.schedule.export') }}" class="btn btn-secondary">Export</a>
@@ -34,20 +34,54 @@
             </tr>
         </thead>
         <tbody>
-            @for ($hour = 7; $hour <= 18; $hour++)
+            @for ($hour = 7; $hour < 18; $hour++)
                 <tr>
                     <td>{{ formatTime($hour) }} - {{ formatTime($hour + 1) }}</td>
                     @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
-                        <td class="time-slot">
-                            @foreach ($schedules as $schedule)
-                                @if ($schedule->day == $day && $schedule->start_time == sprintf('%02d:00:00', $hour))
+                        @php
+                            $scheduleForHour = $schedules->first(function($schedule) use ($day, $hour) {
+                                $startHour = (int) substr($schedule->start_time, 0, 2);
+                                $endHour = (int) substr($schedule->end_time, 0, 2);
+                                return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
+                            });
+                        @endphp
+                        @if ($scheduleForHour)
+                            @php
+                                $startHour = (int) substr($scheduleForHour->start_time, 0, 2);
+                                $endHour = (int) substr($scheduleForHour->end_time, 0, 2);
+                                $rowspan = $endHour - $startHour;
+                            @endphp
+                            @if ($hour == $startHour)
+                                <td class="time-slot" rowspan="{{ $rowspan }}">
                                     <div class="highlight">
-                                        {{ $schedule->course_code }}<br>
-                                        {{ $schedule->faculty->last_name }}
+                                        <div>
+                                            {{ $scheduleForHour->course_code }}<br>
+                                            {{ $scheduleForHour->faculty->last_name }}
+                                        </div>
+                                        <div class="actions">
+                                            <a href="{{ route('admin.schedule.edit', $scheduleForHour->id) }}" class="btn btn-icon edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-icon delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                @endif
-                            @endforeach
-                        </td>
+                                </td>
+                            @endif
+                        @else
+                            @if (!$schedules->first(function($schedule) use ($day, $hour) {
+                                $startHour = (int) substr($schedule->start_time, 0, 2);
+                                $endHour = (int) substr($schedule->end_time, 0, 2);
+                                return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
+                            }))
+                                <td class="time-slot"></td>
+                            @endif
+                        @endif
                     @endforeach
                 </tr>
             @endfor

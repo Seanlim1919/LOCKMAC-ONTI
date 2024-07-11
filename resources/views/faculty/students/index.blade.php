@@ -99,7 +99,7 @@
         </tbody>
     </table>
     <div class="pagination justify-content-center">
-        {{ $students->appends(request()->input())->links() }}
+        {{ $students->appends(request()->input())->links('vendor.pagination.custom-pagination') }}
     </div>
 </div>
 
