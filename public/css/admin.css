@@ -1,0 +1,327 @@
+body {
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+}
+
+.header {
+    background-color: #ffc107;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.header .left {
+    display: flex;
+    align-items: center;
+}
+
+.header img {
+    width: 40px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.header .user-info span {
+    margin-right: 10px;
+    font-size: 16px;
+    color: #000;
+}
+
+.header .user-info i {
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+}
+
+.header .user-info .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 2000;
+    width: 200px;
+    padding: 10px;
+}
+
+.header .user-info .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #000;
+    text-decoration: none;
+}
+
+.header .user-info .dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.header .user-info .dropdown-menu.show {
+    display: block;
+}
+
+.sidebar {
+    background-color: #fff9db;
+    width: 200px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    padding: 20px;
+    border-right: 1px solid #fc0;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #000;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background-color: #ffc107;
+}
+
+.sidebar a i {
+    margin-right: 15px; /* Add space between icon and text */
+}
+
+.sidebar a img {
+    margin-right: 10px;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 50px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.form-control {
+    width: 200px;
+}
+
+.btn {
+    font-size: 14px;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background-color: #f9f9f9;
+}
+
+.table thead th {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: center;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: center;
+}
+
+.table tbody td .btn-icon {
+    display: inline-block;
+    margin-right: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+.table tbody td .btn-icon.edit i {
+    color: green;
+}
+
+.table tbody td .btn-icon.delete i {
+    color: red;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item .page-link {
+    color: #ffc107;
+    border: none;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-dark {
+    margin-right: 10px;
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-icon i {
+    font-size: 16px;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.action-bar .btn-primary {
+    background-color: #000;
+    border-color: #000;
+    margin-left: 20px;
+    color: white;
+    padding: 5px 10px;
+}
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.pagination .page-item {
+    margin: 0 2px;
+}
+
+.pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+    background-color: #ffc107;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f8d7da;
+    border-color: #f8d7da;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.table thead th {
+    text-align: center;
+}
+
+.table thead th:first-child {
+    width: 15%;
+}
+
+.table tbody td {
+    height: 60px;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+}
+
+.highlight {
+    background-color: green;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    text-align: center;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.time-slot {
+    padding: 0;
+}

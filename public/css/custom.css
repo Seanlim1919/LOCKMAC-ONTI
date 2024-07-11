@@ -1,0 +1,122 @@
+body {
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding-top: 100px;
+}
+
+.login-container, .register-container {
+    background-color: #fff9db;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #fc0;
+    font-family: 'DM Sans', sans-serif;
+    width: 450px; /* Ensure fixed width for consistency */
+}
+
+.login-container h2, .register-container h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center; /* Center align the headings */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="date"] {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.form-group.name-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-group.name-group input {
+    flex-flow: row wrap;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.form-group.name-group input:last-child {
+    margin-right: 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    padding: 10px 20px;
+    color: #000;
+    background-color: #ffc107;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 95%;
+    margin-bottom: 20px;
+}
+
+.btn:hover {
+    background-color: #e0a800;
+}
+
+.register-container {
+    width: 450px;
+    margin-bottom: 100px;
+}
+
+.register-container h2 {
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.register-container p {
+    margin-bottom: 20px;
+    text-align: center;
+    margin-top: -5px;
+}
+
+.gender-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.gender-group label {
+    margin-right: 70px;
+}
+
+.gender-group input {
+    margin-right: 10px;
+}
+
+.gender-ratio {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 10px;
+    margin-left: 10px;
+}

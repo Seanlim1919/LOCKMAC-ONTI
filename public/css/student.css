@@ -1,0 +1,124 @@
+.main-content {
+    margin-left: 220px;
+    padding: 50px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.form-control {
+    width: 200px;
+}
+
+.btn {
+    font-size: 14px;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background-color: #f9f9f9;
+}
+
+.table thead th {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: center;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: center;
+}
+
+.table tbody td .btn-icon {
+    display: inline-block;
+    margin-right: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+.table tbody td .btn-icon.edit i {
+    color: green;
+}
+
+.table tbody td .btn-icon.delete i {
+    color: red;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item .page-link {
+    color: #ffc107;
+    border: none;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-dark {
+    margin-right: 10px;
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-icon i {
+    font-size: 16px;
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.action-bar .btn-primary {
+    background-color: #000;
+    border-color: #000;
+    margin-left: 20px;
+    color: white;
+    padding: 5px 10px;
+}
