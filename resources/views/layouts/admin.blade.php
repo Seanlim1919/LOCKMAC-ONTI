@@ -47,9 +47,6 @@
         <a href="{{ route('admin.course.index') }}" class="{{ request()->routeIs('admin.course.*') ? 'active' : '' }}">
             <i class="fas fa-book"></i> Course
         </a>
-        <a href="#" class="{{ request()->routeIs('classes.index') ? 'active' : '' }}">
-            <i class="fas fa-list-ul"></i> Classes
-        </a>
         <a href="{{ route('admin.students.index') }}" class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i> Students
         </a>
