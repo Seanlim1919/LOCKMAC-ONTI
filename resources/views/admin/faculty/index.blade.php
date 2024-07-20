@@ -12,7 +12,6 @@
                 <i class="fas fa-search"></i>
             </button>
         </form>
-        <a href="{{ route('admin.faculty.create') }}" class="btn btn-primary">Add New Faculty</a>
     </div>
     <table class="table table-bordered">
         <thead>
