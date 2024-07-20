@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container centered-container">
+<div class="form-container">
     <h2>EDIT STUDENT</h2>
     <form class="centered-form" method="POST" action="{{ route('students.update', $student->id) }}">
         @csrf
@@ -40,8 +40,6 @@
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="gender" id="male" value="male" {{ $student->gender == 'male' ? 'checked' : '' }} required>
                 <label class="form-check-label" for="male">Male</label>
-            </div>
-            <div class="form-check">
                 <input class="form-check-input" type="radio" name="gender" id="female" value="female" {{ $student->gender == 'female' ? 'checked' : '' }} required>
                 <label class="form-check-label" for="female">Female</label>
             </div>

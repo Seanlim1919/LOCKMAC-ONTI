@@ -14,7 +14,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/student.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/modal.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/faculty.css') }}" rel="stylesheet">
     
 </head>
 <body>

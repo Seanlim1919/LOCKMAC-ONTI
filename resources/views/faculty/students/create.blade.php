@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container centered-container">
+<div class="form-container">
     <h2>ADD NEW STUDENT</h2>
     <form class="centered-form" method="POST" action="{{ route('students.store') }}">
         @csrf

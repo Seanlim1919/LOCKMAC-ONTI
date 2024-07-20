@@ -74,7 +74,7 @@
         </div>
 
         <div class="button-container">
-            <button type="submit" class="btn">
+            <button type="submit" class="btn btn-primary">
                 {{ __('Save Changes') }}
             </button>
         </div>

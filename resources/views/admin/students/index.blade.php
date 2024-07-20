@@ -14,8 +14,8 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Name</th>
                 <th>Student Number</th>
+                <th>Name</th>
                 <th>Year & Section</th>
                 <th>PC</th>
                 <th>Gender</th>
@@ -24,8 +24,8 @@
         <tbody>
             @foreach ($students as $student)
             <tr>
-                <td>{{ $student->first_name }} {{ $student->last_name }}</td>
                 <td>{{ $student->student_number }}</td>
+                <td>{{ $student->first_name }} {{ $student->last_name }}</td>
                 <td>{{ $student->year_and_section }}</td>
                 <td>{{ $student->pc_number }}</td>
                 <td>{{ ucfirst($student->gender) }}</td>

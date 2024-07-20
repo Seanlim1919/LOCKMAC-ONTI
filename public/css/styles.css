@@ -35,7 +35,7 @@
 }
 
 .centered-form .form-check-label {
-    margin-right: 20px;
+    margin-right: 10px;
     font-weight: normal;
 }
 
@@ -57,7 +57,6 @@
 }
 
 h2 {
-    text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
     font-weight: bold;
@@ -105,7 +104,7 @@ h2 {
 .form-container input[type="password"],
 .form-container input[type="number"],
 .form-container select {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ced4da;

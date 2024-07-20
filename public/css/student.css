@@ -38,22 +38,22 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .modal-dialog {
     position: relative;
     margin: auto;
     width: 80%;
-    max-width: 600px; /* Wider max-width */
+    max-width: 600px;
 }
 
 .modal-content {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #888;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
@@ -87,7 +87,7 @@
 
 /* Form Groups */
 .form-group {
-    margin-bottom: 20px; /* Increased margin */
+    margin-bottom: 20px;
 }
 
 .form-group label {
@@ -98,7 +98,7 @@
 
 .form-control {
     width: 100%;
-    padding: 12px; /* Increased padding */
+    padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
@@ -120,7 +120,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 20px; /* Increased padding */
+    padding: 10px 20px;
     font-size: 16px;
     font-weight: bold;
     text-align: center;
@@ -217,5 +217,101 @@
 }
 
 .centered-form .btn-submit:hover {
+    background-color: #e0a800;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #000000;
+    text-align: center;
+    font-weight: 700;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-container .form-group {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    color: #495057;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="date"],
+.form-container input[type="password"],
+.form-container input[type="number"],
+.form-container select {
+    width: 95%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="date"]:focus,
+.form-container input[type="password"]:focus,
+.form-container input[type="number"]:focus,
+.form-container select:focus {
+    border-color: #e0a800;
+    outline: 0;
+    box-shadow: 0 0 5px rgba(255, 226, 2, 0.818);
+}
+
+.form-container .invalid-feedback {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #e3342f;
+}
+
+.form-container .form-check {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-container .form-check-input {
+    margin-right: 10px;
+}
+
+.form-container .form-check-label {
+    margin: 0;
+}
+
+.form-container button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #000000;
+    background-color: #ffc107;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: center
+}
+
+.form-container button[type="submit"]:hover {
     background-color: #e0a800;
 }
