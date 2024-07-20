@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ScheduleManagementController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,6 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
+Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {

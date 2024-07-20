@@ -1,11 +1,15 @@
-.alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+/* Alerts */
+.alert-danger, .alert-success {
     padding: 1rem;
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: 0.25rem;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
 
 .alert-danger ul {
@@ -17,12 +21,106 @@
     list-style-type: none;
 }
 
-/* Common button styles */
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+}
+
+.modal-dialog {
+    position: relative;
+    margin: auto;
+    width: 80%;
+    max-width: 600px; /* Wider max-width */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-header .close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+
+.modal-header .close:hover,
+.modal-header .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-body {
+    margin-top: 10px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px; /* Increased margin */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px; /* Increased padding */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    outline: 0;
+}
+
+/* Button Container */
+.button-container {
+    text-align: right;
+}
+
+/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 15px;
+    padding: 10px 20px; /* Increased padding */
     font-size: 16px;
     font-weight: bold;
     text-align: center;
@@ -53,31 +151,7 @@
     color: #fff;
 }
 
-.btn-icon {
-    padding: 5px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-icon.edit {
-    color: blue;
-}
-
-.btn-icon.edit:hover {
-    color: darkblue;
-}
-
-.btn-icon.delete {
-    color: red;
-}
-
-.btn-icon.delete:hover {
-    color: darkred;
-}
-
-/* Specific styles for the filter and import dropdown menus */
+/* Action Bar */
 .action-bar {
     position: relative;
     margin-bottom: 20px;
@@ -87,132 +161,7 @@
     margin-left: 10px;
 }
 
-#filter-options, #import-options {
-    display: none;
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    z-index: 1000;
-}
-
-#filter-options {
-    position: absolute;
-    top: 40px; /* Adjust based on your button height */
-    right: 0;
-}
-
-#import-options {
-    position: absolute;
-    top: 40px; /* Adjust based on your button height */
-    right: 0;
-}
-
-#filter-options .form-group, #import-options .form-group {
-    margin-bottom: 10px;
-}
-
-#filter-options .form-group label, #import-options .form-group label {
-    display: block;
-    font-weight: bold;
-}
-
-#filter-options .form-control, #import-options .form-control {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-}
-
-#filter-options .btn-apply-filter, #import-options .btn-apply-filter {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #FFCC00;
-    color: #000000;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#filter-options .btn-apply-filter:hover, #import-options .btn-apply-filter:hover {
-    background-color: #FFCC00;
-}
-
-#import-options .btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #6c757d;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-#import-options .btn:hover {
-    background-color: #5a6268;
-}
-
-#import-excel-form, #import-pdf-form {
-    margin-top: 20px;
-}
-
-#import-excel-form input[type="file"], #import-pdf-form input[type="file"] {
-    display: inline-block;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    margin-right: 10px;
-}
-
-#import-excel-form button, #import-pdf-form button {
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-#import-excel-form button {
-    background-color: #28a745;
-    color: #fff;
-}
-
-#import-excel-form button:hover {
-    background-color: #218838;
-}
-
-#import-pdf-form button {
-    background-color: #dc3545;
-    color: #fff;
-}
-
-#import-pdf-form button:hover {
-    background-color: #c82333;
-}
-
-/* Ensure the dropdown menu appears in the correct position */
-.dropdown-menu {
-    position: absolute;
-    display: block;
-    top: 40px;
-    right: 0;
-    margin-top: 120px;
-    min-width: 250px;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* Centered Container */
 .centered-container {
     max-width: 600px;
     margin: 0 auto;
