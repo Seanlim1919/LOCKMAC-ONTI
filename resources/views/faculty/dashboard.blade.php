@@ -1,146 +1,73 @@
-<!-- resources/views/admin/dashboard.blade.php -->
+<!-- resources/views/faculty/dashboard.blade.php -->
+
 @extends('layouts.app')
 
 @section('content')
-<div class="dashboard">
-    <h2>DASHBOARD</h2>
-    <div class="table-container">
-        <table>
-            <thead>
+<div class="container">
+    <h2 class="page-title">DASHBOARD</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>M</th>
+                <th>T</th>
+                <th>W</th>
+                <th>Th</th>
+                <th>F</th>
+                <th>Sat</th>
+                <th>S</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for ($hour = 7; $hour < 18; $hour++)
                 <tr>
-                    <th>Time</th>
-                    <th>M</th>
-                    <th>T</th>
-                    <th>W</th>
-                    <th>Th</th>
-                    <th>F</th>
-                    <th>Sat</th>
-                    <th>S</th>
+                    <td>{{ formatTime($hour) }} - {{ formatTime($hour + 1) }}</td>
+                    @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                        @php
+                            $scheduleForHour = $schedules->first(function($schedule) use ($day, $hour) {
+                                $startHour = (int) substr($schedule->start_time, 0, 2);
+                                $endHour = (int) substr($schedule->end_time, 0, 2);
+                                return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
+                            });
+                        @endphp
+                        @if ($scheduleForHour)
+                            @php
+                                $startHour = (int) substr($scheduleForHour->start_time, 0, 2);
+                                $endHour = (int) substr($scheduleForHour->end_time, 0, 2);
+                                $rowspan = $endHour - $startHour;
+                            @endphp
+                            @if ($hour == $startHour)
+                                <td class="time-slot" rowspan="{{ $rowspan }}">
+                                    <div class="highlight">
+                                        <div>
+                                            {{ $scheduleForHour->course_code }}<br>
+                                            {{ $scheduleForHour->faculty->last_name }}
+                                        </div>
+                                    </div>
+                                </td>
+                            @endif
+                        @else
+                            @if (!$schedules->first(function($schedule) use ($day, $hour) {
+                                $startHour = (int) substr($schedule->start_time, 0, 2);
+                                $endHour = (int) substr($schedule->end_time, 0, 2);
+                                return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
+                            }))
+                                <td class="time-slot"></td>
+                            @endif
+                        @endif
+                    @endforeach
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>7:00 - 8:00</td>
-                    <td class="highlight">ITEC 222 BSIT 2D Faculty</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="highlight">ITEC 222 BSIT 2E Faculty</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>8:00 - 9:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>9:00 - 10:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>10:00 - 11:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>11:00 - 12:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>12:00 - 1:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>1:00 - 2:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="highlight">ITEC 222 BSIT 2B Faculty</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2:00 - 3:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>3:00 - 4:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>4:00 - 5:00</td>
-                    <td class="highlight">ITEC 222 BSIT 2A Faculty</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>5:00 - 6:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>6:00 - 7:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            @endfor
+        </tbody>
+    </table>
 </div>
 @endsection
+
+@php
+function formatTime($hour) {
+    $period = $hour < 12 ? 'AM' : 'PM';
+    $formattedHour = $hour % 12;
+    $formattedHour = $formattedHour == 0 ? 12 : $formattedHour;
+    return sprintf('%d:00 %s', $formattedHour, $period);
+}
+@endphp

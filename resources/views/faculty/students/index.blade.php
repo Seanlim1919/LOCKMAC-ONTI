@@ -6,12 +6,12 @@
     <div class="action-bar d-flex justify-content-end align-items-center position-relative">
         <form method="GET" action="{{ route('students.index') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ $search ?? '' }}" class="form-control" id="search-input" placeholder="Search">
-            <button type="button" class="btn btn-secondary ml-2" id="filter-button">
+            <button type="button" class="btn btn-secondary ml-1" id="filter-button">
                 <i class="fas fa-filter"></i>
             </button>
         </form>
-        <a href="{{ route('students.create') }}" class="btn btn-primary ml-2"><i class="fas fa-plus"></i> Add New Student</a>
-        <button type="button" class="btn btn-primary ml-2" id="import-button">
+        <a href="{{ route('students.create') }}" class="btn btn-primary ml-3"><i class="fas fa-plus"></i> Add New Student</a>
+        <button type="button" class="btn btn-primary ml-3" id="import-button">
             <i class="fas fa-upload"></i> Import Student List
         </button>
     </div>

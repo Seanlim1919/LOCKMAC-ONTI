@@ -3,7 +3,7 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container">
+<div class="form-container">
     <h2>Add New Student</h2>
     <form method="POST" action="{{ route('admin.students.store') }}">
         @csrf

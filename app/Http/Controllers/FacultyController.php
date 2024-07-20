@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Schedule;
+use Illuminate\Support\Facades\Auth;
 
 class FacultyController extends Controller
 {
     public function index()
     {
-        return view('faculty.dashboard');
+        $user = Auth::user();
+        $schedules = Schedule::where('faculty_id', $user->id)->with('course', 'faculty')->get();
+
+        return view('faculty.dashboard', compact('schedules'));
     }
 }

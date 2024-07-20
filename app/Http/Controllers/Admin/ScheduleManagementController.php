@@ -36,6 +36,8 @@ class ScheduleManagementController extends Controller
             'faculty_id' => 'required|exists:users,id',
             'course_id' => 'required|exists:courses,id',
             'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
+            'year_and_section' => 'required|string',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
         ]);
@@ -47,32 +49,6 @@ class ScheduleManagementController extends Controller
         Schedule::create($validated);
 
         return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
-    }
-
-    public function edit(Schedule $schedule)
-    {
-        $faculties = User::where('role', 'faculty')->get();
-        $courses = Course::all();
-        return view('admin.schedule.edit', compact('schedule', 'faculties', 'courses'));
-    }
-
-    public function update(Request $request, Schedule $schedule)
-    {
-        $validated = $request->validate([
-            'faculty_id' => 'required|exists:users,id',
-            'course_id' => 'required|exists:courses,id',
-            'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i',
-        ]);
-
-        $course = Course::find($request->course_id);
-        $validated['course_code'] = $course->course_code;
-        $validated['course_name'] = $course->course_name;
-
-        $schedule->update($validated);
-
-        return redirect()->route('admin.schedule.index')->with('success', 'Schedule updated successfully.');
     }
 
     public function destroy(Schedule $schedule)

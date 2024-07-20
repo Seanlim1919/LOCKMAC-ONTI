@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use ZipArchive;
 
 class StudentController extends Controller
 {
@@ -94,20 +96,25 @@ class StudentController extends Controller
         ]);
 
         $path = $request->file('file')->getRealPath();
+        $spreadsheet = IOFactory::load($path);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
 
-        Excel::load($path, function($reader) {
-            $results = $reader->get();
-            foreach ($results as $row) {
-                Student::create([
-                    'student_number' => $row['student_number'],
-                    'first_name'     => $row['first_name'],
-                    'last_name'      => $row['last_name'],
-                    'program'        => $row['program'],
-                    'year_and_section' => $row['year_and_section'],
-                    'pc_number'      => $row['pc_number'],
-                ]);
+        foreach ($rows as $index => $row) {
+            if ($index == 0) {
+                // Skip header row
+                continue;
             }
-        });
+
+            Student::create([
+                'student_number' => $row[0],
+                'first_name' => $row[1],
+                'last_name' => $row[2],
+                'program' => $row[3],
+                'year_and_section' => $row[4],
+                'pc_number' => $row[5],
+            ]);
+        }
 
         return redirect()->route('students.index')->with('success', 'Students imported successfully.');
     }

@@ -1,14 +1,16 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\Admin\FacultyManagementController;  
-use App\Http\Controllers\Admin\StudentManagementController; 
-use App\Http\Controllers\Admin\ScheduleManagementController; 
-use App\Http\Controllers\Admin\CourseController;  
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Admin\FacultyManagementController;
+use App\Http\Controllers\Admin\StudentManagementController;
+use App\Http\Controllers\Admin\ScheduleManagementController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\LoginController; 
+use App\Http\Controllers\Auth\LoginController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,7 +19,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -50,14 +51,28 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.students.update',
             'destroy' => 'admin.students.destroy',
         ]);
-        Route::resource('schedule', ScheduleManagementController::class)->names('admin.schedule');
+        Route::resource('admin/schedule', ScheduleManagementController::class)->names([
+            'index' => 'admin.schedule.index',
+            'create' => 'admin.schedule.create',
+            'store' => 'admin.schedule.store',
+            'edit' => 'admin.schedule.edit',
+            'update' => 'admin.schedule.update',
+            'destroy' => 'admin.schedule.destroy',
+        ]);
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
+
+        // Route for faculty attendance in the admin panel
+        Route::get('admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');
     });
 
     Route::middleware(['role:faculty'])->group(function () {
         Route::get('/faculty', [FacultyController::class, 'index'])->name('faculty.dashboard');
         Route::resource('/students', StudentController::class)->except(['show']);
-        Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
-        Route::post('/students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf');
+        Route::get('students/import', [StudentController::class, 'import'])->name('students.import');
+        Route::post('students/import', [StudentController::class, 'import'])->name('students.import');
+        Route::get('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf');
+
+        // Route for student attendance in the faculty panel
+        Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');
     });
 });

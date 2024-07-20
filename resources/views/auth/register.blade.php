@@ -34,7 +34,7 @@
         </div>
 
         <div class="form-group">
-            <label for="email">{{ __('Email') }}</label>
+            <label for="email">{{ __('CSPC Email') }}</label>
             <input id="iemail" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your Institutional Email">
             @error('email')
                 <span class="invalid-feedback" role="alert">

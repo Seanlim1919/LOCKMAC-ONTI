@@ -17,6 +17,8 @@ class Schedule extends Model
         'day',
         'start_time',
         'end_time',
+        'program',
+        'year_and_section',
     ];
 
     public function faculty()
@@ -28,4 +30,10 @@ class Schedule extends Model
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }
+

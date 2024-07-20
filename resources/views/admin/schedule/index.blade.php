@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>SCHEDULE</h2>
+    <h2 class="page-title">SCHEDULE</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('admin.schedule.create') }}" class="btn btn-primary">Add New Schedule</a>
         <a href="{{ route('admin.schedule.export') }}" class="btn btn-secondary">Export</a>
@@ -17,7 +17,7 @@
                     </option>
                 @endforeach
             </select>
-            <button type="submit" class="btn btn-primary">View Schedule</button>
+            <button type="submit" class="btn btn-primary2">View Schedule</button>
         </form>
     </div>
     <table class="table table-bordered">
@@ -56,12 +56,10 @@
                                     <div class="highlight">
                                         <div>
                                             {{ $scheduleForHour->course_code }}<br>
-                                            {{ $scheduleForHour->faculty->last_name }}
+                                            {{ $scheduleForHour->faculty->last_name }}<br>
+                                            {{ $scheduleForHour->program }} - {{ $scheduleForHour->year_and_section }}
                                         </div>
                                         <div class="actions">
-                                            <a href="{{ route('admin.schedule.edit', $scheduleForHour->id) }}" class="btn btn-icon edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
                                             <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
                                                 @csrf
                                                 @method('DELETE')

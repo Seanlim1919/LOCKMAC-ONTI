@@ -20,10 +20,12 @@ class CreateSchedulesTable extends Migration
             $table->string('course_code');
             $table->string('course_name');
             $table->string('day');
+            $table->enum('program', ['BSIT', 'BLIS', 'BSCS', 'BSIS']);
+            $table->string('year_and_section');
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();
-
+            
             $table->foreign('faculty_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });

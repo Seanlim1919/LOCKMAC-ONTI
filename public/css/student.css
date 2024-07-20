@@ -1,124 +1,195 @@
-.main-content {
-    margin-left: 220px;
-    padding: 50px;
-}
-
-.container {
-    margin-top: 20px;
-}
-
-h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-.form-control {
-    width: 200px;
-}
-
+/* Common button styles */
 .btn {
-    font-size: 14px;
-}
-
-.table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
-
-.table thead {
-    background-color: #f9f9f9;
-}
-
-.table thead th {
-    border: 1px solid #dee2e6;
-    padding: 8px;
-    text-align: center;
-}
-
-.table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.table tbody td {
-    border: 1px solid #dee2e6;
-    padding: 8px;
-    text-align: center;
-}
-
-.table tbody td .btn-icon {
-    display: inline-block;
-    margin-right: 5px;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    vertical-align: middle; /* Ensure vertical alignment */
-}
-
-.table tbody td .btn-icon.edit i {
-    color: green;
-}
-
-.table tbody td .btn-icon.delete i {
-    color: red;
-}
-
-.pagination {
-    margin-top: 20px;
-}
-
-.pagination .page-item .page-link {
-    color: #ffc107;
-    border: none;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-
-.btn-dark {
-    margin-right: 10px;
-}
-
-.btn i {
-    margin-right: 5px;
-}
-
-.btn-icon {
-    width: 24px;
-    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-}
-
-.btn-icon i {
+    padding: 10px 15px;
     font-size: 16px;
-    vertical-align: middle; /* Ensure vertical alignment */
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
 }
 
+.btn-primary:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    color: #fff;
+}
+
+.btn-icon {
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-icon.edit {
+    color: blue;
+}
+
+.btn-icon.edit:hover {
+    color: darkblue;
+}
+
+.btn-icon.delete {
+    color: red;
+}
+
+.btn-icon.delete:hover {
+    color: darkred;
+}
+
+/* Specific styles for the filter and import dropdown menus */
 .action-bar {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 15px;
+    position: relative;
+    margin-bottom: 20px;
 }
 
-.action-bar .btn-primary {
-    background-color: #000;
-    border-color: #000;
-    margin-left: 20px;
-    color: white;
-    padding: 5px 10px;
+#filter-button, #import-button {
+    margin-left: 10px;
+}
+
+#filter-options, #import-options {
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    z-index: 1000;
+}
+
+#filter-options {
+    position: absolute;
+    top: 40px; /* Adjust based on your button height */
+    right: 0;
+}
+
+#import-options {
+    position: absolute;
+    top: 40px; /* Adjust based on your button height */
+    right: 0;
+}
+
+#filter-options .form-group, #import-options .form-group {
+    margin-bottom: 10px;
+}
+
+#filter-options .form-group label, #import-options .form-group label {
+    display: block;
+    font-weight: bold;
+}
+
+#filter-options .form-control, #import-options .form-control {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+#filter-options .btn-apply-filter, #import-options .btn-apply-filter {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #FFCC00;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#filter-options .btn-apply-filter:hover, #import-options .btn-apply-filter:hover {
+    background-color: #FFCC00;
+}
+
+#import-options .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+#import-options .btn:hover {
+    background-color: #5a6268;
+}
+
+#import-excel-form, #import-pdf-form {
+    margin-top: 20px;
+}
+
+#import-excel-form input[type="file"], #import-pdf-form input[type="file"] {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    margin-right: 10px;
+}
+
+#import-excel-form button, #import-pdf-form button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#import-excel-form button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+#import-excel-form button:hover {
+    background-color: #218838;
+}
+
+#import-pdf-form button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+#import-pdf-form button:hover {
+    background-color: #c82333;
+}
+
+/* Ensure the dropdown menu appears in the correct position */
+.dropdown-menu {
+    position: absolute;
+    display: block;
+    top: 40px;
+    right: 0;
+    margin-top: 120px;
+    min-width: 250px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

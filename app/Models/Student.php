@@ -18,5 +18,12 @@ class Student extends Model
         'year_and_section',
         'gender',
         'pc_number',
+        'rfid',
+        
     ];
+
+    public function attendances()
+    {
+        return $this->hasMany(StudentAttendance::class);
+    }
 }

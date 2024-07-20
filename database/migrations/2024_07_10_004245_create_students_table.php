@@ -23,6 +23,7 @@ class CreateStudentsTable extends Migration
             $table->string('year_and_section');
             $table->enum('gender', ['male', 'female']);
             $table->integer('pc_number');
+            $table->integer('rfid')->unique()->nullable();
             $table->timestamps();
         });
     }

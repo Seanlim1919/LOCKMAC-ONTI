@@ -6,13 +6,13 @@
 <div class="container">
     <h2>FACULTY</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
-        <a href="{{ route('admin.faculty.create') }}" class="btn btn-primary">Add New Faculty</a>
         <form method="GET" action="{{ route('admin.faculty.index') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="search-input" placeholder="Search">
             <button type="submit" class="btn btn-secondary ml-2">
                 <i class="fas fa-search"></i>
             </button>
         </form>
+        <a href="{{ route('admin.faculty.create') }}" class="btn btn-primary">Add New Faculty</a>
     </div>
     <table class="table table-bordered">
         <thead>

@@ -15,6 +15,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/header.css') }}" rel="stylesheet">
     <link href="{{ asset('css/student.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -42,10 +43,10 @@
         <a href="{{ route('faculty.dashboard') }}" class="{{ request()->routeIs('faculty.dashboard') ? 'active' : '' }}">
             <i class="fas fa-home"></i> Dashboard
         </a>
-        <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.index') ? 'active' : '' }}">
+        <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.index.*') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i> Students
         </a>
-        <a href="#" class="{{ request()->routeIs('attendance.index') ? 'active' : '' }}">
+        <a href="{{ route('faculty.attendance') }}" class="{{ request()->routeIs('faculty.attendance') ? 'active' : '' }}">
             <i class="fas fa-calendar-check"></i> Attendance
         </a>
     </aside>

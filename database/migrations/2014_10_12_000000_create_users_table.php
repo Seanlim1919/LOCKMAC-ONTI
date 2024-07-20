@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
             $table->enum('role', ['admin', 'faculty'])->default('faculty');
+            $table->integer('rfid')->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

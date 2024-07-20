@@ -9,11 +9,13 @@
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <!-- Styles -->
     <link href="{{ asset('css/header.css') }}" rel="stylesheet">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -50,13 +52,14 @@
         <a href="{{ route('admin.students.index') }}" class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i> Students
         </a>
-        <a href="#" class="{{ request()->routeIs('attendance.index') ? 'active' : '' }}">
+        <a href="{{ route('admin.attendance') }}" class="{{ request()->routeIs('admin.attendance') ? 'active' : '' }}">
             <i class="fas fa-calendar-check"></i> Attendance
         </a>
         <a href="{{ route('admin.schedule.index') }}" class="{{ request()->routeIs('admin.schedule.*') ? 'active' : '' }}">
             <i class="fas fa-calendar-alt"></i> Schedule
         </a>
     </aside>
+
 
     <script>
         document.querySelector('.dropdown-toggle').addEventListener('click', function() {
