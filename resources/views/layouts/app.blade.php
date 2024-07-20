@@ -43,7 +43,7 @@
         <a href="{{ route('faculty.dashboard') }}" class="{{ request()->routeIs('faculty.dashboard') ? 'active' : '' }}">
             <i class="fas fa-home"></i> Dashboard
         </a>
-        <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.index.*') ? 'active' : '' }}">
+        <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.index') ? 'active' : '' }}">
             <i class="fas fa-user-graduate"></i> Students
         </a>
         <a href="{{ route('faculty.attendance') }}" class="{{ request()->routeIs('faculty.attendance') ? 'active' : '' }}">

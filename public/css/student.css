@@ -1,3 +1,22 @@
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-danger ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.alert-danger li {
+    list-style-type: none;
+}
+
 /* Common button styles */
 .btn {
     display: inline-flex;
@@ -192,4 +211,62 @@
     border-radius: 5px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.centered-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.centered-form .form-group {
+    margin-bottom: 15px;
+}
+
+.centered-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.centered-form .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.centered-form .form-check {
+    display: flex;
+    align-items: center;
+}
+
+.centered-form .form-check-input {
+    margin-right: 10px;
+}
+
+.centered-form .form-check-label {
+    margin-right: 20px;
+    font-weight: normal;
+}
+
+.centered-form .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #ffc107;
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.centered-form .btn-submit:hover {
+    background-color: #e0a800;
 }

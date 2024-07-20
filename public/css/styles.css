@@ -1,3 +1,69 @@
+.centered-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.centered-form .form-group {
+    margin-bottom: 15px;
+}
+
+.centered-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.centered-form .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.centered-form .form-check {
+    display: flex;
+    align-items: center;
+}
+
+.centered-form .form-check-input {
+    margin-right: 10px;
+}
+
+.centered-form .form-check-label {
+    margin-right: 20px;
+    font-weight: normal;
+}
+
+.centered-form .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #fc0;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.centered-form .btn-submit:hover {
+    background-color: #e0a800;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
 /* Styles specifically for the create and edit forms */
 .form-container {
     max-width: 600px;

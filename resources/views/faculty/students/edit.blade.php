@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container centered-container">
     <h2>EDIT STUDENT</h2>
-    <form method="POST" action="{{ route('students.update', $student->id) }}">
+    <form class="centered-form" method="POST" action="{{ route('students.update', $student->id) }}">
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -50,7 +50,7 @@
             <label for="pc_number">PC Number</label>
             <input type="number" class="form-control" id="pc_number" name="pc_number" value="{{ $student->pc_number }}" required>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-submit">Submit</button>
     </form>
 </div>
 @endsection

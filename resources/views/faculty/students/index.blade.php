@@ -3,6 +3,23 @@
 @section('content')
 <div class="container">
     <h2>STUDENTS</h2>
+
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('errors'))
+    <div class="alert alert-danger">
+        <ul>
+            @foreach(session('errors') as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <div class="action-bar d-flex justify-content-end align-items-center position-relative">
         <form method="GET" action="{{ route('students.index') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ $search ?? '' }}" class="form-control" id="search-input" placeholder="Search">
@@ -79,7 +96,7 @@
             @foreach ($students as $student)
             <tr>
                 <td>{{ $student->student_number }}</td>
-                <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                <td>{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</td>
                 <td>{{ $student->program }} {{ $student->year_and_section }}</td>
                 <td>{{ $student->pc_number }}</td>
                 <td class="actions">
