@@ -69,8 +69,10 @@ class User extends Authenticatable
         return $this->hasMany(Schedule::class, 'faculty_id');
     }
 
+    public function rfid()
+    {
+        return $this->belongsTo(RFID::class, 'rfid_id');
+    }
      
-
-
     
 }

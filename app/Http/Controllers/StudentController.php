@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\Schedule;
+use App\Models\RFID;
 use Illuminate\Http\Request;
 use Smalot\PdfParser\Parser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -111,9 +112,16 @@ class StudentController extends Controller
             'section' => 'required|in:A,B,C,D,E,F,G,H',
             'gender' => 'required|in:male,female',
             'pc_number' => 'required|integer',
+            'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
         ]);
 
-        Student::create($request->all());
+        $rfidId = null;
+        if ($request->filled('rfid_code')) {
+            $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
+            $rfidId = $rfid ? $rfid->id : null;
+        }
+
+        Student::create(array_merge($request->all(), ['rfid_id' => $rfidId]));
         return redirect()->route('students.index')->with('success', 'Student created successfully.');
     }
 
@@ -129,9 +137,16 @@ class StudentController extends Controller
             'section' => 'required|in:A,B,C,D,E,F,G,H',
             'gender' => 'required|in:male,female',
             'pc_number' => 'required|integer',
+            'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
         ]);
 
-        $student->update($request->all());
+        $rfidId = null;
+        if ($request->filled('rfid_code')) {
+            $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
+            $rfidId = $rfid ? $rfid->id : null;
+        }
+
+        $student->update(array_merge($request->all(), ['rfid_id' => $rfidId]));
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
 

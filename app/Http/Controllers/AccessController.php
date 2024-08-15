@@ -10,8 +10,10 @@ class AccessController extends Controller
 {
     public function checkAccess(Request $request)
     {
-        $rfid = $request->input('rfid');
-        $user = User::where('rfid', $rfid)->first();
+        $rfidCode = $request->input('rfid'); // Assuming the RFID code is provided
+        $user = User::whereHas('rfid', function($query) use ($rfidCode) {
+            $query->where('rfid_code', $rfidCode);
+        })->first();
 
         if ($user && ($user->role == 'admin' || $user->role == 'faculty')) {
             return response()->json(['status' => 'allowed', 'user_id' => $user->id]);

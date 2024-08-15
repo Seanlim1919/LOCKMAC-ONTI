@@ -31,4 +31,10 @@ class Student extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
+
+    public function rfid()
+    {
+        return $this->belongsTo(RFID::class);
+    }
+
 }

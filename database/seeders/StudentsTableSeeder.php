@@ -29,7 +29,6 @@ class StudentsTableSeeder extends Seeder
                             'section' => $section,
                             'gender' => $genders[array_rand($genders)],
                             'pc_number' => rand(1000, 9999), // Random PC number
-                            'rfid' => rand(1000000000, 1999999999), // Random RFID number
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
