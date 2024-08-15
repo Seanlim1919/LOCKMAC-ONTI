@@ -26,4 +26,9 @@ class Student extends Model
     {
         return $this->hasMany(StudentAttendance::class);
     }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
+    }
 }

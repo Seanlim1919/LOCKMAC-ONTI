@@ -16,7 +16,7 @@
             <tr>
                 <th>Student Number</th>
                 <th>Name</th>
-                <th>Year & Section</th>
+                <th>Program & Section</th>
                 <th>PC</th>
                 <th>Gender</th>
             </tr>
@@ -26,7 +26,7 @@
             <tr>
                 <td>{{ $student->student_number }}</td>
                 <td>{{ $student->first_name }} {{ $student->last_name }}</td>
-                <td>{{ $student->year_and_section }}</td>
+                <td>{{ $student->program }} {{ $student->year }}{{ $student->section }}</td>
                 <td>{{ $student->pc_number }}</td>
                 <td>{{ ucfirst($student->gender) }}</td>
             </tr>

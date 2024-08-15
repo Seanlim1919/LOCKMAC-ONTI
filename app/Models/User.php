@@ -57,5 +57,20 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+     // User.php (Model)
+     public function schedule()
+     {
+         return $this->hasOne(Schedule::class, 'faculty_id');
+     }
+
+     public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'faculty_id');
+    }
+
+     
+
+
     
 }

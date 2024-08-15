@@ -31,8 +31,26 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="year_and_section">Year & Section</label>
-            <input type="text" class="form-control" id="year_and_section" name="year_and_section" required>
+            <label for="year">Year</label>
+            <select class="form-control" id="year" name="year" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="section">Section</label>
+            <select class="form-control" id="section" name="section" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="gender">Gender</label>

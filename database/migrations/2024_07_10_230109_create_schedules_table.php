@@ -21,7 +21,8 @@ class CreateSchedulesTable extends Migration
             $table->string('course_name');
             $table->string('day');
             $table->enum('program', ['BSIT', 'BLIS', 'BSCS', 'BSIS']);
-            $table->string('year_and_section');
+            $table->enum('year', [1, 2, 3, 4]);
+            $table->enum('section', ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();

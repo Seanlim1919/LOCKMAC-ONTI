@@ -32,8 +32,26 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="year_and_section">Year & Section</label>
-            <input type="text" class="form-control" id="year_and_section" name="year_and_section" value="{{ $student->year_and_section }}" required>
+            <label for="year">Year</label>
+            <select class="form-control" id="year" name="year" required>
+                <option value="1" {{ $student->year == 1 ? 'selected' : '' }}>1</option>
+                <option value="2" {{ $student->year == 2 ? 'selected' : '' }}>2</option>
+                <option value="3" {{ $student->year == 3 ? 'selected' : '' }}>3</option>
+                <option value="4" {{ $student->year == 4 ? 'selected' : '' }}>4</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="section">Section</label>
+            <select class="form-control" id="section" name="section" required>
+                <option value="A" {{ $student->section == 'A' ? 'selected' : '' }}>A</option>
+                <option value="B" {{ $student->section == 'B' ? 'selected' : '' }}>B</option>
+                <option value="C" {{ $student->section == 'C' ? 'selected' : '' }}>C</option>
+                <option value="D" {{ $student->section == 'D' ? 'selected' : '' }}>D</option>
+                <option value="E" {{ $student->section == 'E' ? 'selected' : '' }}>E</option>
+                <option value="F" {{ $student->section == 'F' ? 'selected' : '' }}>F</option>
+                <option value="G" {{ $student->section == 'G' ? 'selected' : '' }}>G</option>
+                <option value="H" {{ $student->section == 'H' ? 'selected' : '' }}>H</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="gender">Gender</label>

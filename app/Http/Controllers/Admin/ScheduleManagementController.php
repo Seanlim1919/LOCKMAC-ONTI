@@ -37,7 +37,8 @@ class ScheduleManagementController extends Controller
             'course_id' => 'required|exists:courses,id',
             'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
             'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
-            'year_and_section' => 'required|string',
+            'year' => 'required|in:1,2,3,4',
+            'section' => 'required|in:A,B,C,D,E,F,G,H',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
         ]);

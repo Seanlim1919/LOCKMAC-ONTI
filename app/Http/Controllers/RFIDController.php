@@ -23,7 +23,8 @@ class RFIDController extends Controller
         $student = Student::where('rfid', $rfid)->first();
         if ($student) {
             $schedule = Schedule::where('program', $student->program)
-                                ->where('year_and_section', $student->year_and_section)
+                                ->where('year', $student->year)
+                                ->where('section', $student->section)
                                 ->where('day', $day)
                                 ->where('start_time', '<=', $time)
                                 ->where('end_time', '>=', $time)

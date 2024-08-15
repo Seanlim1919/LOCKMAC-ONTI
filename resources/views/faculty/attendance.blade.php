@@ -15,7 +15,7 @@
         <tbody>
             @foreach ($studentAttendances as $attendance)
             <tr>
-                <td>{{ $attendance->student->first_name }} {{ $attendance->student->last_name }}</td>
+                <td>{{ $attendance->student->first_name ?? 'Unknown' }} {{ $attendance->student->last_name ?? '' }}</td>
                 <td>{{ $attendance->student->student_number }}</td>
                 <td>{{ $attendance->entered_at }}</td>
                 <td>{{ $attendance->exited_at }}</td>

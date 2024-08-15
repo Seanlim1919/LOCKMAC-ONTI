@@ -20,7 +20,8 @@ class CreateStudentsTable extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->enum('program', ['BSIT', 'BLIS', 'BSCS', 'BSIS']);
-            $table->string('year_and_section');
+            $table->enum('year', [1, 2, 3, 4]);
+            $table->enum('section', ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
             $table->enum('gender', ['male', 'female']);
             $table->integer('pc_number');
             $table->integer('rfid')->unique()->nullable();

@@ -54,8 +54,28 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="filter-year-and-section">Year & Section</label>
-                <input type="text" class="form-control" id="filter-year-and-section" name="year_and_section" value="{{ request('year_and_section') }}">
+                <label for="filter-year">Year</label>
+                <select class="form-control" id="filter-year" name="year">
+                    <option value="">All</option>
+                    <option value="1" {{ request('year') == '1' ? 'selected' : '' }}>1</option>
+                    <option value="2" {{ request('year') == '2' ? 'selected' : '' }}>2</option>
+                    <option value="3" {{ request('year') == '3' ? 'selected' : '' }}>3</option>
+                    <option value="4" {{ request('year') == '4' ? 'selected' : '' }}>4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filter-section">Section</label>
+                <select class="form-control" id="filter-section" name="section">
+                    <option value="">All</option>
+                    <option value="A" {{ request('section') == 'A' ? 'selected' : '' }}>A</option>
+                    <option value="B" {{ request('section') == 'B' ? 'selected' : '' }}>B</option>
+                    <option value="C" {{ request('section') == 'C' ? 'selected' : '' }}>C</option>
+                    <option value="D" {{ request('section') == 'D' ? 'selected' : '' }}>D</option>
+                    <option value="E" {{ request('section') == 'E' ? 'selected' : '' }}>E</option>
+                    <option value="F" {{ request('section') == 'F' ? 'selected' : '' }}>F</option>
+                    <option value="G" {{ request('section') == 'G' ? 'selected' : '' }}>G</option>
+                    <option value="H" {{ request('section') == 'H' ? 'selected' : '' }}>H</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-apply-filter">Apply Filters</button>
         </form>
@@ -96,8 +116,8 @@
             @foreach ($students as $student)
             <tr>
                 <td>{{ $student->student_number }}</td>
-                <td>{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</td>
-                <td>{{ $student->program }} {{ $student->year_and_section }}</td>
+                <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                <td>{{ $student->program }} {{ $student->year }}{{ $student->section }}</td>
                 <td>{{ $student->pc_number }}</td>
                 <td class="actions">
                     <a href="{{ route('students.edit', $student->id) }}" class="btn btn-icon edit">
@@ -153,6 +173,7 @@
         searchInput.addEventListener('input', function () {
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(function () {
+                document.getElementById
                 document.getElementById('search-form').submit();
             }, 300); // Adjust the debounce delay as needed
         });
