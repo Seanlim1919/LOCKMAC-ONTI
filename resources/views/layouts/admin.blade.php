@@ -54,7 +54,7 @@
             <i class="fas fa-user-graduate"></i> Students
         </a>
         <a href="{{ route('admin.attendance') }}" class="{{ request()->routeIs('admin.attendance') ? 'active' : '' }}">
-            <i class="fas fa-calendar-check"></i> Attendance
+            <i class="fas fa-calendar-check"></i> Faculty Logs
         </a>
         <a href="{{ route('admin.schedule.index') }}" class="{{ request()->routeIs('admin.schedule.*') ? 'active' : '' }}">
             <i class="fas fa-calendar-alt"></i> Schedule
