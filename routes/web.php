@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -63,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
             'destroy' => 'admin.schedule.destroy',
         ]);
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
+        Route::get('/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
 
         // Route for faculty attendance in the admin panel
         Route::get('admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');

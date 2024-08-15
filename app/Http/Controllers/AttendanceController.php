@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Exports\FacultyAttendanceExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Attendance;
-use App\Models\StudentAttendance;
 
 class AttendanceController extends Controller
 {
@@ -12,6 +12,11 @@ class AttendanceController extends Controller
     {
         $facultyAttendances = Attendance::with('faculty')->get();
         return view('admin.attendance', compact('facultyAttendances'));
+    }
+
+    public function exportFacultyAttendance()
+    {
+        return Excel::download(new FacultyAttendanceExport, 'faculty_attendance.xlsx');
     }
 
     public function showStudentAttendance()
