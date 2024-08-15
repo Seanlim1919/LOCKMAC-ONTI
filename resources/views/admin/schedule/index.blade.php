@@ -52,24 +52,25 @@
                                 $rowspan = $endHour - $startHour;
                             @endphp
                             @if ($hour == $startHour)
-                                <td class="time-slot" rowspan="{{ $rowspan }}">
-                                    <div class="highlight">
-                                        <div>
-                                            {{ $scheduleForHour->course_code }}<br>
-                                            {{ $scheduleForHour->faculty->last_name }}<br>
-                                            {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
-                                        </div>
-                                        <div class="actions">
-                                            <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-icon delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
+                            <td class="time-slot" rowspan="{{ $rowspan }}">
+                                <div class="highlight">
+                                    <div>
+                                        {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
+                                        {{ $scheduleForHour->course_code }}<br>
+                                        {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }} {{ $scheduleForHour->section }}
                                     </div>
-                                </td>
+                                    <div class="actions">
+                                        <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-icon delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+
                             @endif
                         @else
                             @if (!$schedules->first(function($schedule) use ($day, $hour) {

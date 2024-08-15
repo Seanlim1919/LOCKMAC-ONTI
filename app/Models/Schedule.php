@@ -18,7 +18,8 @@ class Schedule extends Model
         'start_time',
         'end_time',
         'program',
-        'year_and_section',
+        'year',
+        'section',
     ];
 
     public function faculty()

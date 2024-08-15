@@ -42,55 +42,59 @@ class StudentController extends Controller
             Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
         }
 
-        // Apply current schedule filters if no specific filters are provided
-        if (!$program && !$year && !$section && $schedules->isNotEmpty()) {
-            $programs = $schedules->pluck('program')->unique();
-            $years = $schedules->pluck('year')->unique();
-            $sections = $schedules->pluck('section')->unique();
+        // Build query to get students matching all schedule criteria
+        $studentsQuery = Student::query();
 
-            $students = Student::query()
-                ->whereIn('program', $programs)
-                ->whereIn('year', $years)
-                ->whereIn('section', $sections);
-        } else {
-            $students = Student::query()
-                ->when($search, function ($query, $search) {
-                    return $query->where(function($q) use ($search) {
-                        $q->where('first_name', 'LIKE', "%{$search}%")
-                            ->orWhere('last_name', 'LIKE', "%{$search}%")
-                            ->orWhere('student_number', 'LIKE', "%{$search}%")
-                            ->orWhere('program', 'LIKE', "%{$search}%")
-                            ->orWhere('year', 'LIKE', "%{$search}%")
-                            ->orWhere('section', 'LIKE', "%{$search}%");
+        if ($schedules->isNotEmpty()) {
+            $studentsQuery->where(function($query) use ($schedules) {
+                foreach ($schedules as $schedule) {
+                    $query->orWhere(function($q) use ($schedule) {
+                        $q->where('program', $schedule->program)
+                        ->where('year', $schedule->year)
+                        ->where('section', $schedule->section);
                     });
-                })
-                ->when($gender, function ($query, $gender) {
-                    return $query->where('gender', $gender);
-                })
-                ->when($program, function ($query, $program) {
-                    return $query->where('program', $program);
-                })
-                ->when($year, function ($query, $year) {
-                    return $query->where('year', $year);
-                })
-                ->when($section, function ($query, $section) {
-                    return $query->where('section', $section);
-                })
-                ->when($scheduleId, function ($query, $scheduleId) {
-                    return $query->where('schedule_id', $scheduleId);
-                })
-                ->orderBy('program')
-                ->orderBy('year')
-                ->orderBy('section');
+                }
+            });
         }
 
+        // Apply additional filters
+        $studentsQuery->when($search, function ($query, $search) {
+            return $query->where(function($q) use ($search) {
+                $q->where('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%")
+                ->orWhere('student_number', 'LIKE', "%{$search}%")
+                ->orWhere('program', 'LIKE', "%{$search}%")
+                ->orWhere('year', 'LIKE', "%{$search}%")
+                ->orWhere('section', 'LIKE', "%{$search}%");
+            });
+        })
+        ->when($gender, function ($query, $gender) {
+            return $query->where('gender', $gender);
+        })
+        ->when($program, function ($query, $program) {
+            return $query->where('program', $program);
+        })
+        ->when($year, function ($query, $year) {
+            return $query->where('year', $year);
+        })
+        ->when($section, function ($query, $section) {
+            return $query->where('section', $section);
+        })
+        ->when($scheduleId, function ($query, $scheduleId) {
+            return $query->where('schedule_id', $scheduleId);
+        })
+        ->orderBy('program')
+        ->orderBy('year')
+        ->orderBy('section');
+
         // Paginate students
-        $students = $students->paginate(10);
+        $students = $studentsQuery->paginate(10);
 
         $allSchedules = Schedule::all(); // Load all schedules for other purposes
 
         return view('faculty.students.index', compact('students', 'search', 'gender', 'program', 'year', 'section', 'scheduleId', 'allSchedules'));
     }
+
 
 
 

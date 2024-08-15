@@ -69,11 +69,12 @@
                                 $rowspan = $endHour - $startHour;
                             @endphp
                             @if ($hour == $startHour)
-                                <td class="time-slot" rowspan="{{ $rowspan }}" onclick="window.location='{{ route('admin.schedule.edit', $scheduleForHour->id) }}'" data-toggle="tooltip" data-placement="top" title="{{ $scheduleForHour->course_name }} with {{ $scheduleForHour->faculty->first_name }} {{ $scheduleForHour->faculty->last_name }}">
+                                <td class="time-slot" rowspan="{{ $rowspan }}" onclick="window.location='{{ route('admin.schedule.edit', $scheduleForHour->id) }}'" data-toggle="tooltip" data-placement="top" title="{{ $scheduleForHour->course_name }} with {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->first_name }} {{ $scheduleForHour->faculty->last_name }}">
                                     <div class="highlight">
                                         <div>
                                             {{ $scheduleForHour->course_code }}<br>
-                                            {{ $scheduleForHour->faculty->last_name }}
+                                            {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }} <br>
+                                            {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
                                         </div>
                                     </div>
                                 </td>

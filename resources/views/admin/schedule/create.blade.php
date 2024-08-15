@@ -31,17 +31,17 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="year">Year</label>
-            <select class="form-control" id="year" name="year" required>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
+        <label for="year">Year</label>
+        <select name="year" id="year" class="form-control" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
         </div>
         <div class="form-group">
             <label for="section">Section</label>
-            <select class="form-control" id="section" name="section" required>
+            <select name="section" id="section" class="form-control" required>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
@@ -52,6 +52,7 @@
                 <option value="H">H</option>
             </select>
         </div>
+
         <div class="form-group">
             <label for="day">Day</label>
             <select name="day" id="day" class="form-control">

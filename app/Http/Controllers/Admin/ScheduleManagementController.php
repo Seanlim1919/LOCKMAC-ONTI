@@ -31,26 +31,31 @@ class ScheduleManagementController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'faculty_id' => 'required|exists:users,id',
-            'course_id' => 'required|exists:courses,id',
-            'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
-            'year' => 'required|in:1,2,3,4',
-            'section' => 'required|in:A,B,C,D,E,F,G,H',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i',
-        ]);
+{
+    // Validate input
+    $validated = $request->validate([
+        'faculty_id' => 'required|exists:users,id',
+        'course_id' => 'required|exists:courses,id',
+        'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+        'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
+        'year' => 'required|in:1,2,3,4',
+        'section' => 'required|in:A,B,C,D,E,F,G,H',
+        'start_time' => 'required|date_format:H:i',
+        'end_time' => 'required|date_format:H:i',
+    ]);
 
-        $course = Course::find($request->course_id);
-        $validated['course_code'] = $course->course_code;
-        $validated['course_name'] = $course->course_name;
+    // Additional debug: Check validated data
+    \Log::info($validated);
 
-        Schedule::create($validated);
+    $course = Course::find($request->course_id);
+    $validated['course_code'] = $course->course_code;
+    $validated['course_name'] = $course->course_name;
 
-        return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
-    }
+    Schedule::create($validated);
+
+    return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
+}
+
 
     public function destroy(Schedule $schedule)
     {

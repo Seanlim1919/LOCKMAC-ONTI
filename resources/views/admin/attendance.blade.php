@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>Faculty Attendance</h2>
+    <h2>Faculty Logs</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('attendance.export') }}" class="btn btn-primary">Export to Excel</a>
     </div>
