@@ -6,8 +6,8 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Student Name</th>
                 <th>Student Number</th>
+                <th>Student Name</th>
                 <th>Entered At</th>
                 <th>Exited At</th>
             </tr>
@@ -15,8 +15,8 @@
         <tbody>
             @foreach ($studentAttendances as $attendance)
             <tr>
-                <td>{{ $attendance->student->first_name ?? 'Unknown' }} {{ $attendance->student->last_name ?? '' }}</td>
                 <td>{{ $attendance->student->student_number }}</td>
+                <td>{{ $attendance->student->first_name ?? 'Unknown' }} {{ $attendance->student->last_name ?? '' }}</td>
                 <td>{{ $attendance->entered_at }}</td>
                 <td>{{ $attendance->exited_at }}</td>
             </tr>

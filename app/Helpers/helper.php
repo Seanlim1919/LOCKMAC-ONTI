@@ -17,7 +17,7 @@ if (!function_exists('getFacultyTitle')) {
         if ($gender === 'male') {
             return 'Mr.';
         } elseif ($gender === 'female') {
-            return 'Ms./Mrs.';
+            return 'Ms.';
         }
 
         return 'Mr./Ms.'; // Default if gender is not set or recognized

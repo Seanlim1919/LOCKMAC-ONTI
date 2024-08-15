@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\FacultyAttendanceExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Attendance;
+use App\Models\StudentAttendance;
 
 class AttendanceController extends Controller
 {
