@@ -73,6 +73,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(RFID::class, 'rfid_id');
     }
+
+    public function students()
+    {
+        return $this->hasManyThrough(Student::class, Course::class);
+    }
      
     
 }

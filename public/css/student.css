@@ -27,20 +27,25 @@
     border-color: #c3e6cb;
 }
 
-/* Modal */
+/* Modal Overlay */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1050;
-    padding-top: 100px;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1050; /* Make sure it is on top */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
 }
 
+/* Show the modal */
+.modal.show {
+    display: block !important;
+}
+
+/* Modal Dialog */
 .modal-dialog {
     position: relative;
     margin: auto;
@@ -48,21 +53,23 @@
     max-width: 600px;
 }
 
+/* Modal Content */
 .modal-content {
     background-color: #fff;
-    padding: 20px;
     border: 1px solid #888;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 }
 
+/* Modal Header */
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #dee2e6;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f7f7f7;
 }
 
 .modal-header .close {
@@ -78,31 +85,32 @@
 .modal-header .close:focus {
     color: #000;
     text-decoration: none;
-    cursor: pointer;
 }
 
+/* Modal Body */
 .modal-body {
-    margin-top: 10px;
+    padding: 1rem;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column !important;
 }
 
 /* Form Groups */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
+    width: 100%; /* Ensure form groups span full width */
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
+/* Form Controls */
 .form-control {
-    width: 100%;
+    width: 100%; /* Ensure form controls span full width */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
     transition: border-color 0.3s;
+    box-sizing: border-box !important; 
 }
 
 .form-control:focus {
@@ -113,6 +121,7 @@
 /* Button Container */
 .button-container {
     text-align: right;
+    margin-top: 1rem; /* Added margin to separate from the form fields */
 }
 
 /* Buttons */
@@ -138,7 +147,6 @@
 
 .btn-primary:hover {
     background-color: #0056b3;
-    color: #fff;
 }
 
 .btn-secondary {
@@ -148,7 +156,6 @@
 
 .btn-secondary:hover {
     background-color: #5a6268;
-    color: #fff;
 }
 
 /* Action Bar */
@@ -159,6 +166,7 @@
 
 #filter-button, #import-button {
     margin-left: 10px;
+    margin-right: 10px;
 }
 
 /* Centered Container */
@@ -220,6 +228,7 @@
     background-color: #e0a800;
 }
 
+/* Form Container */
 .form-container {
     max-width: 600px;
     margin: 60px auto;
@@ -309,7 +318,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-    align-self: center
+    align-self: center;
 }
 
 .form-container button[type="submit"]:hover {

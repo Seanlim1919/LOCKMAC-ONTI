@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    <h2 class="page-title">DASHBOARD</h2>
+    <h1 class="page-title">DASHBOARD</h1>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -41,7 +41,7 @@
                                     <div class="highlight">
                                         <div>
                                             {{ $scheduleForHour->course_code }}<br>
-                                            {{ $scheduleForHour->faculty->last_name }} <br>
+                                            {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
                                             {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
                                         </div>
                                     </div>

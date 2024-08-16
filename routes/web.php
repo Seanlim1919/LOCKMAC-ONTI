@@ -76,9 +76,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('students/import', [StudentController::class, 'import'])->name('students.import');
         Route::post('students/import', [StudentController::class, 'import'])->name('students.import');
         Route::get('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf');
-        Route::post('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf');       
+        Route::post('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf'); 
+        Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.students');
+        Route::post('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.students.export');
 
         // Route for student attendance in the faculty panel
         Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');
+
     });
 });

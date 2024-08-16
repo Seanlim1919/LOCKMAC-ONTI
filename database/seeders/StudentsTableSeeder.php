@@ -15,6 +15,21 @@ class StudentsTableSeeder extends Seeder
         $sections = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
         $genders = ['male', 'female'];
 
+        $rfidIds = [];
+
+        // First, populate the `rfids` table with enough entries
+        for ($i = 1; $i <= 650; $i++) {
+            $rfidId = DB::table('rfids')->insertGetId([
+                'rfid_code' => Str::random(10), // Generate a random RFID code
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $rfidIds[] = $rfidId;
+        }
+
+        $rfidIndex = 0;
+
+        // Then, assign each student a unique RFID
         foreach ($programs as $program) {
             foreach ($years as $year) {
                 foreach ($sections as $section) {
@@ -29,9 +44,12 @@ class StudentsTableSeeder extends Seeder
                             'section' => $section,
                             'gender' => $genders[array_rand($genders)],
                             'pc_number' => rand(1000, 9999), // Random PC number
+                            'rfid_id' => $rfidIds[$rfidIndex], // Assign the RFID
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
+
+                        $rfidIndex++;
                     }
                 }
             }

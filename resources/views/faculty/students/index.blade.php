@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>STUDENTS</h2>
+    <h1>STUDENTS</h1>
 
     @if(session('success'))
     <div class="alert alert-success">
@@ -27,9 +27,11 @@
                 <i class="fas fa-filter"></i>
             </button>
         </form>
-        <a href="{{ route('students.create') }}" class="btn btn-primary ml-3"><i class="fas fa-plus"></i> Add New Student</a>
-        <button type="button" class="btn btn-primary ml-3" id="import-button">
-            <i class="fas fa-upload"></i> Import Student List
+        <button type="button" class="btn btn-success" onclick="window.location.href='{{ route('students.create') }}'">
+             Add New Student
+        </button>
+        <button type="button" class="btn btn-success" id="import-button">
+             Import Student List
         </button>
     </div>
 
@@ -168,14 +170,13 @@
         const searchInput = document.getElementById('search-input');
         const filterButton = document.getElementById('filter-button');
         const filterOptions = document.getElementById('filter-options');
-        let debounceTimeout;
 
-        searchInput.addEventListener('input', function () {
-            clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(function () {
-                document.getElementById
+        // Handle Enter key in search input
+        searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission
                 document.getElementById('search-form').submit();
-            }, 300); // Adjust the debounce delay as needed
+            }
         });
 
         filterButton.addEventListener('click', function () {

@@ -18,7 +18,6 @@
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Gender</th>
                 <th>Phone</th>
                 <th>Actions</th>
             </tr>
@@ -28,7 +27,6 @@
             <tr>
                 <td>{{ $faculty->first_name }} {{ $faculty->last_name }}</td>
                 <td>{{ $faculty->email }}</td>
-                <td>{{ ucfirst($faculty->gender) }}</td>
                 <td>{{ $faculty->phone_number }}</td>
                 <td>
                     <a href="{{ route('admin.faculty.edit', $faculty->id) }}" class="btn btn-icon edit"><i class="fas fa-edit"></i></a>

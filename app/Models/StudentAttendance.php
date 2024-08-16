@@ -12,9 +12,18 @@ class StudentAttendance extends Model
     protected $fillable = [
         'student_id', 'entered_at', 'exited_at'
     ];
+    
+    protected $casts = [
+        'entered_at' => 'datetime',
+    ];
 
     public function student()
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 }

@@ -55,8 +55,8 @@
                             <td class="time-slot" rowspan="{{ $rowspan }}">
                                 <div class="highlight">
                                     <div>
-                                        {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
                                         {{ $scheduleForHour->course_code }}<br>
+                                        {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
                                         {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }} {{ $scheduleForHour->section }}
                                     </div>
                                     <div class="actions">

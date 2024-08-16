@@ -37,4 +37,14 @@ class Student extends Model
         return $this->belongsTo(RFID::class);
     }
 
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

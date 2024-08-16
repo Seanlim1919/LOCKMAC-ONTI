@@ -15,7 +15,6 @@
     <!-- Styles -->
     <link href="{{ asset('css/student.css') }}" rel="stylesheet">
     <link href="{{ asset('css/faculty.css') }}" rel="stylesheet">
-    
 </head>
 <body>
     <header class="header">
@@ -69,7 +68,7 @@
                 <div class="modal-body">
                     <form id="settingsForm">
                         @csrf
-                        <div class="form-group name-group">
+                        <div class="form-group">
                             <label for="first_name">{{ __('First Name') }}</label>
                             <input id="first_name" type="text" class="form-control" name="first_name" required placeholder="First Name">
 
