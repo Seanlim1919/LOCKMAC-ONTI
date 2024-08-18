@@ -14,14 +14,6 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="course_id">Course</label>
-            <select name="course_id" id="course_id" class="form-control">
-                @foreach ($courses as $course)
-                    <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="form-group">
             <label for="program">Program</label>
             <select class="form-control" id="program" name="program" required>
                 <option value="BSIT">BSIT</option>
@@ -52,7 +44,16 @@
                 <option value="H">H</option>
             </select>
         </div>
-
+        <div class="form-group">
+            <label for="course_id">Course</label>
+            <select name="course_id" id="course_id" class="form-control">
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" data-program="{{ $course->program }}">
+                        {{ $course->course_code }} - {{ $course->course_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <div class="form-group">
             <label for="day">Day</label>
             <select name="day" id="day" class="form-control">
@@ -76,4 +77,28 @@
         <button type="submit" class="btn btn-primary">Add Schedule</button>
     </form>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const programSelect = document.getElementById('program');
+    const courseSelect = document.getElementById('course_id');
+    const courseOptions = Array.from(courseSelect.options);
+
+    programSelect.addEventListener('change', function () {
+        const selectedProgram = this.value;
+        
+        // Clear the current course options
+        courseSelect.innerHTML = '';
+
+        // Filter and add relevant course options
+        courseOptions.forEach(function(option) {
+            if (option.getAttribute('data-program') === selectedProgram) {
+                courseSelect.appendChild(option);
+            }
+        });
+    });
+
+    // Trigger change event to filter courses initially
+    programSelect.dispatchEvent(new Event('change'));
+});
+</script>
 @endsection
