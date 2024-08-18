@@ -47,7 +47,7 @@
             <i class="fas fa-user-graduate"></i> Students
         </a>
         <a href="{{ route('faculty.attendance') }}" class="{{ request()->routeIs('faculty.attendance') ? 'active' : '' }}">
-            <i class="fas fa-calendar-check"></i> Attendance
+            <i class="fas fa-calendar-check"></i> Student Attendance
         </a>
     </aside>
 

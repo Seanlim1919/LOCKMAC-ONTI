@@ -103,6 +103,8 @@
             </button>
         </div>
 
+        <!-- Hidden RFID Input -->
+        <input type="hidden" name="rfid" id="rfid" value="{{ old('rfid') }}">
     </form>
 </div>
 
@@ -122,46 +124,48 @@
         </div>
     </div>
 </div>
-@endsection
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const rfidModal = document.getElementById('rfidModal');
-    const scanRfidButton = document.getElementById('scanRfidButton');
-    const closeModalButton = document.getElementById('closeModalButton');
+let scanning = false;
 
-    const rfidHandler = function(event) {
-        const rfidValue = event.target.value.trim(); // Assuming RFID scanner inputs value into focused element
-        if (rfidValue) {
-            // Save RFID to hidden input field or handle as needed
-            const rfidField = document.createElement('input');
-            rfidField.setAttribute('type', 'hidden');
-            rfidField.setAttribute('name', 'rfid');
-            rfidField.setAttribute('value', rfidValue);
-            document.querySelector('form').appendChild(rfidField);
+$('#scanRfidButton').click(async function() {
+    $('#rfidModal').show();
+    let scanning = true;
 
-            // Submit the form
-            document.getElementById('registrationForm').submit();
+    try {
+        // Request USB device
+        const device = await navigator.usb.requestDevice({
+            filters: [{ vendorId: 0x072f }] // ACR122U Vendor ID
+        });
+        console.log('Device selected:', device);
+
+        // Open the device if not already opened
+        if (!device.opened) {
+            await device.open();
+            console.log('Device opened');
+        } else {
+            console.log('Device is already opened');
         }
-    };
 
-    scanRfidButton.addEventListener('click', function() {
-        rfidModal.style.display = 'block';
-        document.addEventListener('input', rfidHandler);
-    });
+        // Select the configuration
+        await device.selectConfiguration(1); // Ensure correct configuration value
+        console.log('Configuration selected');
 
-    closeModalButton.addEventListener('click', function() {
-        rfidModal.style.display = 'none';
-        document.removeEventListener('input', rfidHandler);
-    });
+        // Claim the interface
+        await device.claimInterface(0); // Ensure correct interface number
+        console.log('Interface claimed');
 
-    window.addEventListener('click', function(event) {
-        if (event.target == rfidModal) {
-            rfidModal.style.display = 'none';
-            document.removeEventListener('input', rfidHandler);
-        }
-    });
+    } catch (error) {
+        console.error('Error interacting with USB device:', error);
+    } finally {
+        $('#rfidModal').hide();
+        scanning = false;
+    }
 });
+
+
 </script>
+
+
 @endsection

@@ -7,35 +7,29 @@
         <div class="col-md-3">
             <div class="info-box bg-primary text-white">
                 <div class="info-box-content">
-                    <span class="info-box-text">Number of Faculty</span>
+                    <span class="info-box-text">Number of Faculty</span> <br>
                     <span class="info-box-number">{{ $facultyCount }}</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="info-box bg-success text-white">
                 <div class="info-box-content">
-                    <span class="info-box-text">Number of Students</span>
+                    <span class="info-box-text">Number of Students</span> <br>
                     <span class="info-box-number">{{ $studentCount }}</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="info-box bg-warning text-white">
                 <div class="info-box-content">
-                    <span class="info-box-text">Number of Courses</span>
+                    <span class="info-box-text">Number of Courses</span> <br>
                     <span class="info-box-number">{{ $courseCount }}</span>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-9">
             <div class="info-box bg-danger text-white">
                 <div class="info-box-content">
                     <span class="info-box-text">Attendance Percentage</span>
-                    <span class="info-box-number">{{ number_format($attendancePercentage, 2) }}%</span>
+                    <span class="info-box-number">{{number_format($attendancePercentage, 2) }}%</span>
+                    <canvas id="attendanceChart"></canvas>
                 </div>
             </div>
         </div>
+
     </div>
     <table class="table table-bordered">
         <thead>
@@ -104,3 +98,47 @@ function formatTime($hour) {
     return sprintf('%d:00 %s', $formattedHour, $period);
 }
 @endphp
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const monthlyData = @json($monthlyAttendance);
+    const months = monthlyData.map(data => data.month);
+    const percentages = monthlyData.map(data => data.percentage.toFixed(2));
+
+    const attendanceData = {
+        labels: months,
+        datasets: [{
+            label: 'Attendance Percentage',
+            data: percentages,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: attendanceData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + "%";
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    const attendanceChart = new Chart(ctx, config);
+</script>
+

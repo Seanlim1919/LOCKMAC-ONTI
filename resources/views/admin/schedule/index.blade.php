@@ -5,7 +5,7 @@
     <h2 class="page-title">SCHEDULE</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('admin.schedule.create') }}" class="btn btn-primary">Add New Schedule</a>
-        <a href="{{ route('admin.schedule.export') }}" class="btn btn-secondary">Export</a>
+        <a href="{{ route('admin.schedule.exportPdf') }}" class="btn btn-secondary">Export</a>
     </div>
     <div class="mb-3">
         <form method="GET" action="{{ route('admin.schedule.index') }}" class="d-flex align-items-center">

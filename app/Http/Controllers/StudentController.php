@@ -80,23 +80,18 @@ class StudentController extends Controller
         ->when($section, function ($query, $section) {
             return $query->where('section', $section);
         })
-        ->when($scheduleId, function ($query, $scheduleId) {
-            return $query->where('schedule_id', $scheduleId);
-        })
         ->orderBy('program')
         ->orderBy('year')
-        ->orderBy('section');
+        ->orderBy('section')
+        ->orderBy('pc_number'); // Order by pc_number
 
-        // Paginate students
+        // Paginate students, possibly grouping by program, year, section
         $students = $studentsQuery->paginate(10);
 
         $allSchedules = Schedule::all(); // Load all schedules for other purposes
 
         return view('faculty.students.index', compact('students', 'search', 'gender', 'program', 'year', 'section', 'scheduleId', 'allSchedules'));
     }
-
-
-
 
 
     public function create()
@@ -119,6 +114,27 @@ class StudentController extends Controller
             'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
         ]);
 
+        // Check if the section already has 30 students
+        $sectionCount = Student::where('program', $request->input('program'))
+                                ->where('year', $request->input('year'))
+                                ->where('section', $request->input('section'))
+                                ->count();
+
+        if ($sectionCount >= 30) {
+            return redirect()->back()->withErrors(['section' => 'This section already has the maximum number of students (30).']);
+        }
+
+        // Check for duplicate PC number within the same section
+        $duplicatePC = Student::where('program', $request->input('program'))
+                                ->where('year', $request->input('year'))
+                                ->where('section', $request->input('section'))
+                                ->where('pc_number', $request->input('pc_number'))
+                                ->exists();
+
+        if ($duplicatePC) {
+            return redirect()->back()->withErrors(['pc_number' => 'This PC number is already assigned to another student in the same section.']);
+        }
+
         $rfidId = null;
         if ($request->filled('rfid_code')) {
             $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
@@ -126,6 +142,7 @@ class StudentController extends Controller
         }
 
         Student::create(array_merge($request->all(), ['rfid_id' => $rfidId]));
+
         return redirect()->route('students.index')->with('success', 'Student created successfully.');
     }
 
@@ -144,6 +161,29 @@ class StudentController extends Controller
             'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
         ]);
 
+        // Check if the section already has 30 students
+        $sectionCount = Student::where('program', $request->input('program'))
+                                ->where('year', $request->input('year'))
+                                ->where('section', $request->input('section'))
+                                ->where('id', '!=', $student->id) // Exclude the current student
+                                ->count();
+
+        if ($sectionCount >= 30) {
+            return redirect()->back()->withErrors(['section' => 'This section already has the maximum number of students (30).']);
+        }
+
+        // Check for duplicate PC number within the same section
+        $duplicatePC = Student::where('program', $request->input('program'))
+                                ->where('year', $request->input('year'))
+                                ->where('section', $request->input('section'))
+                                ->where('pc_number', $request->input('pc_number'))
+                                ->where('id', '!=', $student->id) // Exclude the current student
+                                ->exists();
+
+        if ($duplicatePC) {
+            return redirect()->back()->withErrors(['pc_number' => 'This PC number is already assigned to another student in the same section.']);
+        }
+
         $rfidId = null;
         if ($request->filled('rfid_code')) {
             $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
@@ -151,6 +191,7 @@ class StudentController extends Controller
         }
 
         $student->update(array_merge($request->all(), ['rfid_id' => $rfidId]));
+
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
 
@@ -164,7 +205,6 @@ class StudentController extends Controller
         $student->delete();
         return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
-
     public function import(Request $request)
     {
         $request->validate([

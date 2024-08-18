@@ -24,6 +24,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
 
+Route::middleware(['rfid'])->group(function () {
+    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect(auth()->user()->role === 'admin' ? '/admin' : '/faculty');
@@ -65,6 +69,8 @@ Route::middleware(['auth'])->group(function () {
         ]);
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
         Route::get('/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
+        Route::get('export-pdf', [ScheduleManagementController::class, 'exportPdf'])->name('admin.schedule.exportPdf');
+
 
         // Route for faculty attendance in the admin panel
         Route::get('admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');
@@ -84,4 +90,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');
 
     });
+    
 });

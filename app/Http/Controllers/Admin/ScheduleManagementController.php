@@ -9,6 +9,8 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SchedulesExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ScheduleManagementController extends Controller
 {
@@ -64,8 +66,12 @@ class ScheduleManagementController extends Controller
         return redirect()->route('admin.schedule.index')->with('success', 'Schedule deleted successfully.');
     }
 
-    public function export()
+    public function exportPdf()
     {
-        return Excel::download(new SchedulesExport, 'schedules.xlsx');
+        $schedules = Schedule::with('faculty')->get();
+
+        $pdf = Pdf::loadView('admin.schedule.pdf', compact('schedules'))
+                ->setPaper('a4', 'landscape'); 
+        return $pdf->download('schedules.pdf');
     }
 }

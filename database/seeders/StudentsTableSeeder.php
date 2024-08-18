@@ -15,10 +15,13 @@ class StudentsTableSeeder extends Seeder
         $sections = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
         $genders = ['male', 'female'];
 
+        // Calculate the total number of students
+        $totalStudents = count($programs) * count($years) * count($sections) * 30;
+
         $rfidIds = [];
 
-        // First, populate the `rfids` table with enough entries
-        for ($i = 1; $i <= 650; $i++) {
+        // Populate the `rfids` table with enough entries
+        for ($i = 1; $i <= $totalStudents; $i++) {
             $rfidId = DB::table('rfids')->insertGetId([
                 'rfid_code' => Str::random(10), // Generate a random RFID code
                 'created_at' => now(),
@@ -29,11 +32,14 @@ class StudentsTableSeeder extends Seeder
 
         $rfidIndex = 0;
 
-        // Then, assign each student a unique RFID
+        // Assign each student a unique RFID
         foreach ($programs as $program) {
             foreach ($years as $year) {
                 foreach ($sections as $section) {
-                    for ($i = 1; $i <= 5; $i++) {
+                    $pcNumbers = range(1, 30); // Create an array of PC numbers from 1 to 30
+                    shuffle($pcNumbers); // Shuffle to randomize the PC assignment
+
+                    for ($i = 1; $i <= 30; $i++) { // Limit each section to 30 students
                         DB::table('students')->insert([
                             'student_number' => 'S' . Str::random(6), // Unique student number
                             'first_name' => 'FirstName' . $i,
@@ -43,7 +49,7 @@ class StudentsTableSeeder extends Seeder
                             'year' => $year,
                             'section' => $section,
                             'gender' => $genders[array_rand($genders)],
-                            'pc_number' => rand(1000, 9999), // Random PC number
+                            'pc_number' => $pcNumbers[$i - 1], // Assign a unique PC number within the section
                             'rfid_id' => $rfidIds[$rfidIndex], // Assign the RFID
                             'created_at' => now(),
                             'updated_at' => now(),

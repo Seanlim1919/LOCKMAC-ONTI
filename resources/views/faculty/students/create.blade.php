@@ -63,7 +63,7 @@
         </div>
         <div class="form-group">
             <label for="pc_number">PC Number</label>
-            <input type="number" class="form-control" id="pc_number" name="pc_number" required>
+            <input type="number" class="form-control" id="pc_number" name="pc_number" min="1" max="30" required>
         </div>
         <button type="submit" class="btn btn-submit">Submit</button>
     </form>
