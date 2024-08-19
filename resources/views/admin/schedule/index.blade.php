@@ -57,7 +57,7 @@
                                     <div>
                                         {{ $scheduleForHour->course_code }}<br>
                                         {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
-                                        {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }} {{ $scheduleForHour->section }}
+                                        {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
                                     </div>
                                     <div class="actions">
                                         <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">

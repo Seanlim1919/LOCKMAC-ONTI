@@ -24,10 +24,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
 
-Route::middleware(['rfid'])->group(function () {
-    Route::post('/register', [RegisterController::class, 'register'])->name('register');
-});
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect(auth()->user()->role === 'admin' ? '/admin' : '/faculty');

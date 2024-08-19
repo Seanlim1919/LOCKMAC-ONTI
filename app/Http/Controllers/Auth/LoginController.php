@@ -55,4 +55,5 @@ class LoginController extends Controller
 
         return redirect('/login'); // Redirect to login page after logout
     }
+    
 }

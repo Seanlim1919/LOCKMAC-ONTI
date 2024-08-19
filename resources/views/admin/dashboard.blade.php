@@ -23,7 +23,7 @@
         <div class="col-md-9">
             <div class="info-box bg-danger text-white">
                 <div class="info-box-content">
-                    <span class="info-box-text">Attendance Percentage</span>
+                    <span class="info-box-text">Faculty Attendance Percentage</span> <br>
                     <span class="info-box-number">{{number_format($attendancePercentage, 2) }}%</span>
                     <canvas id="attendanceChart"></canvas>
                 </div>

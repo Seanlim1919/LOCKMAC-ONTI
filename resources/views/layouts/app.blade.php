@@ -165,6 +165,22 @@
                 }
             }
         }
+
+        let logoutTimer;
+
+        function resetLogoutTimer() {
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(() => {
+                alert("You have been logged out due to inactivity.");
+                document.getElementById('logout-form').submit(); // Submit the logout form
+            }, 120000); // 120,000 milliseconds = 2 minutes
+        }
+
+        window.onload = resetLogoutTimer;
+        document.onmousemove = resetLogoutTimer;
+        document.onkeypress = resetLogoutTimer;
+
+
     </script>
 </body>
 </html>
