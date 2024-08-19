@@ -158,11 +158,42 @@
     background-color: #5a6268;
 }
 
-/* Action Bar */
-.action-bar {
-    position: relative;
-    margin-bottom: 20px;
+/* Style for the buttons in the action bar */
+.action-bar form {
+    margin-left: 10px; /* Space between buttons */
 }
+
+.action-bar .btn {
+    padding: 10px 20px; /* Adjust padding for button size */
+    font-size: 14px; /* Adjust font size */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.action-bar .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.action-bar .btn-success {
+    background-color: #000000;
+    color: white;
+    border: none;
+}
+
+/* Add some hover effects */
+.action-bar .btn:hover {
+    opacity: 0.9;
+}
+
+.action-bar .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.action-bar .btn-success:hover {
+    background-color: #6c757d;
+}
+
 
 #filter-button, #import-button {
     margin-left: 10px;

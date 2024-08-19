@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf'); 
         Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.students');
         Route::post('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.students.export');
+        Route::post('/attendance/export-logbook-pdf', [AttendanceController::class, 'exportLogbookPdf'])->name('attendance.students.exportPdf');
 
         // Route for student attendance in the faculty panel
         Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');

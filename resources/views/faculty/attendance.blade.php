@@ -17,7 +17,16 @@
             <input type="hidden" name="date" value="{{ request('date') }}">
             <input type="hidden" name="section" value="{{ request('section') }}">
             <input type="hidden" name="course" value="{{ request('course') }}">
-            <button type="submit" class="btn btn-success">Export to Excel</button>
+            <button type="submit" class="btn btn-success">Export Attendance</button>
+        </form>
+        <form method="POST" action="{{ route('attendance.students.exportPdf') }}">
+            @csrf
+            <input type="hidden" name="date" value="{{ request('date') }}">
+            <input type="hidden" name="section" value="{{ request('section') }}">
+            <input type="hidden" name="course" value="{{ request('course') }}">
+            <input type="hidden" name="program" value="{{ request('program') }}">
+            <input type="hidden" name="year" value="{{ request('year') }}">
+            <button type="submit" class="btn btn-success">Export Logbook</button>
         </form>
     </div>
 

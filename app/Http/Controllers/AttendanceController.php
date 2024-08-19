@@ -10,6 +10,7 @@ use App\Models\StudentAttendance;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceController extends Controller
 {
@@ -124,6 +125,57 @@ class AttendanceController extends Controller
         $section = $request->input('section');
 
         return Excel::download(new StudentAttendanceExport($date, $course, $program, $year, $section), 'student_attendance.xlsx');
+    }
+
+
+    public function exportLogbookPdf(Request $request)
+    {
+        // Fetch filters
+        $date = $request->input('date');
+        $section = $request->input('section');
+        $course = $request->input('course');
+        $program = $request->input('program');
+        $year = $request->input('year');
+
+        // Query student attendance based on the filters
+        $query = StudentAttendance::with(['student', 'course', 'student.faculty']);
+
+        if ($date) {
+            $query->whereDate('entered_at', $date);
+        }
+
+        if ($section) {
+            $query->whereHas('student', function ($q) use ($section) {
+                $q->where('section', $section);
+            });
+        }
+
+        if ($course) {
+            $query->whereHas('course', function ($q) use ($course) {
+                $q->where('id', $course);
+            });
+        }
+
+        if ($program) {
+            $query->whereHas('student', function ($q) use ($program) {
+                $q->where('program', $program);
+            });
+        }
+
+        if ($year) {
+            $query->whereHas('student', function ($q) use ($year) {
+                $q->where('year', $year);
+            });
+        }
+
+        $studentAttendances = $query->get();
+
+        // Load the view and pass the data to the PDF
+        $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
+                    ->setPaper('a4', 'landscape');
+
+        // Download the PDF file
+        return $pdf->download('student_logbook.pdf');
     }
 
 }

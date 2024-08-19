@@ -4,14 +4,17 @@ namespace App\Exports;
 use App\Models\StudentAttendance;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class StudentAttendanceExport implements FromCollection, WithHeadings
+class StudentAttendanceExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithEvents
 {
-    protected $date;
-    protected $course;
-    protected $program;
-    protected $year;
-    protected $section;
+    protected $date, $course, $program, $year, $section;
 
     public function __construct($date, $course, $program, $year, $section)
     {
@@ -24,51 +27,98 @@ class StudentAttendanceExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = StudentAttendance::query()->with(['student', 'course']);
-
-        if ($this->date) {
-            $query->whereDate('entered_at', $this->date);
-        }
-
-        if ($this->course) {
-            $query->where('course_id', $this->course);
-        }
-
-        if ($this->program) {
-            $query->whereHas('student', function ($q) {
-                $q->where('program', $this->program);
+        return StudentAttendance::with(['student', 'course'])
+            ->when($this->date, function ($q) {
+                $q->whereDate('entered_at', $this->date);
+            })
+            ->when($this->course, function ($q) {
+                $q->where('course_id', $this->course);
+            })
+            ->when($this->program, function ($q) {
+                $q->whereHas('student', function ($q) {
+                    $q->where('program', $this->program);
+                });
+            })
+            ->when($this->year, function ($q) {
+                $q->whereHas('student', function ($q) {
+                    $q->where('year', $this->year);
+                });
+            })
+            ->when($this->section, function ($q) {
+                $q->whereHas('student', function ($q) {
+                    $q->where('section', $this->section);
+                });
+            })
+            ->get()
+            ->map(function ($attendance) {
+                return [
+                    'student_number' => $attendance->student->student_number,
+                    'student_name' => $attendance->student->first_name . ' ' . $attendance->student->last_name,
+                    'program_year_section' => $attendance->student->program . ', ' . $attendance->student->year . '-' . $attendance->student->section,
+                    'entered_at' => $attendance->entered_at,
+                ];
             });
-        }
-
-        if ($this->year) {
-            $query->whereHas('student', function ($q) {
-                $q->where('year', $this->year);
-            });
-        }
-
-        if ($this->section) {
-            $query->whereHas('student', function ($q) {
-                $q->where('section', $this->section);
-            });
-        }
-
-        return $query->get()->map(function ($attendance) {
-            return [
-                $attendance->student ? $attendance->student->first_name . ' ' . $attendance->student->last_name : 'N/A',
-                $attendance->course ? $attendance->course->course_name : 'N/A',
-                $attendance->entered_at->format('Y-m-d'),
-                $attendance->status,
-            ];
-        });
     }
-
+    
     public function headings(): array
     {
         return [
+            'Student Number',
             'Student Name',
-            'Course Name',
-            'Date',
-            'Status'
+            'Program, Year & Section',
+            'Entered At'
+        ];
+    }
+    
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            // Style the first row as bold
+            1 => ['font' => ['bold' => true]],
+        ];
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $event->sheet->getStyle('A1:H1')->applyFromArray([
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => '4CAF50', // Green background
+                        ],
+                    ],
+                    'font' => [
+                        'color' => [
+                            'rgb' => 'FFFFFF', // White text
+                        ],
+                        'bold' => true,
+                        'size' => 12,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+
+                // Apply border and alignment styling to all cells
+                $event->sheet->getStyle('A1:H' . $event->sheet->getHighestRow())->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            },
         ];
     }
 }
