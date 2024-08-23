@@ -5,6 +5,7 @@
     <h2>Faculty Logs</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
         <a href="{{ route('attendance.export') }}" class="btn btn-primary">Export to Excel</a>
+        <a href="{{ route('attendance.export.pdf') }}" class="btn btn-secondary">Export to PDF</a>
     </div>
     <table class="table table-bordered mt-3">
         <thead>

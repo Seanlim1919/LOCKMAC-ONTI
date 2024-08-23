@@ -27,6 +27,25 @@ class AttendanceController extends Controller
         return Excel::download(new FacultyAttendanceExport, 'faculty_attendance.xlsx');
     }
 
+    public function exportFacultyAttendancePdf()
+    {
+        // Fetch the attendance data with related faculty
+        $facultyAttendances = Attendance::with('faculty')->get()->map(function ($attendance) {
+            return [
+                'Faculty Name' => $attendance->faculty->first_name . ' ' . $attendance->faculty->last_name,
+                'Date' => $attendance->date->format('Y-m-d'),
+                'Time In' => $attendance->time_in->format('H:i:s'),
+                'Time Out' => $attendance->time_out ? $attendance->time_out->format('H:i:s') : 'N/A',
+            ];
+        });
+    
+        // Load the view and pass the data
+        $pdf = Pdf::loadView('admin.pdf', ['facultyAttendances' => $facultyAttendances]);
+    
+        // Return the PDF as a download
+        return $pdf->download('faculty_attendance.pdf');
+    }    
+
     // Show Student Attendance with filters
     public function showStudentAttendance(Request $request)
     {

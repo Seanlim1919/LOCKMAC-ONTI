@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
         Route::get('/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
         Route::get('export-pdf', [ScheduleManagementController::class, 'exportPdf'])->name('admin.schedule.exportPdf');
+        Route::get('/attendance/export/pdf', [AttendanceController::class, 'exportFacultyAttendancePdf'])->name('attendance.export.pdf');
 
 
         // Route for faculty attendance in the admin panel
