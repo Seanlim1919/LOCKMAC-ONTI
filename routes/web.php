@@ -64,13 +64,15 @@ Route::middleware(['auth'])->group(function () {
             'destroy' => 'admin.schedule.destroy',
         ]);
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
-        Route::get('/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
         Route::get('export-pdf', [ScheduleManagementController::class, 'exportPdf'])->name('admin.schedule.exportPdf');
-        Route::get('/attendance/export/pdf', [AttendanceController::class, 'exportFacultyAttendancePdf'])->name('attendance.export.pdf');
 
 
         // Route for faculty attendance in the admin panel
-        Route::get('admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');
+        Route::get('/admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');
+        Route::get('/admin/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
+        Route::get('/admin/attendance/export/pdf', [AttendanceController::class, 'exportFacultyAttendancePdf'])->name('attendance.export.pdf');
+
+
     });
 
     Route::middleware(['role:faculty'])->group(function () {

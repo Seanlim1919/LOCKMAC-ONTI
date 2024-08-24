@@ -2,13 +2,14 @@
 
 namespace App\Exports;
 
-use App\Models\Attendance;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Models\Attendance; // Import the Attendance model
+use Carbon\Carbon; // Ensure Carbon is imported for handling dates
 
 class FacultyAttendanceExport implements FromCollection, WithHeadings
 {
-    /**
+    /** 
      * Return a collection of data to be exported.
      *
      * @return \Illuminate\Support\Collection
@@ -16,13 +17,17 @@ class FacultyAttendanceExport implements FromCollection, WithHeadings
     public function collection()
     {
         // Fetch the attendance data with related faculty
-        return Attendance::with('faculty')->get()->map(function ($attendance) {
+        return Attendance::with('user')->get()->map(function ($attendance) {
+            // Handle null values and ensure proper formatting
+            $enteredAt = $attendance->entered_at ? Carbon::parse($attendance->entered_at) : null;
+            $exitedAt = $attendance->exited_at ? Carbon::parse($attendance->exited_at) : null;
+
             return [
-                'Faculty Name' => $attendance->faculty->name ?? 'N/A',
-                'Date' => $attendance->date->format('Y-m-d'),
-                'Time In' => $attendance->time_in->format('H:i:s'),
-                'Time Out' => $attendance->time_out ? $attendance->time_out->format('H:i:s') : 'N/A',
-                'Status' => $attendance->status,
+                'Faculty Name' => $attendance->user ? ($attendance->user->first_name . ' ' . $attendance->user->last_name) : 'N/A',
+                'Date' => $enteredAt ? $enteredAt->format('Y-m-d') : 'N/A',
+                'Time In' => $enteredAt ? $enteredAt->format('H:i:s') : 'N/A',
+                'Time Out' => $exitedAt ? $exitedAt->format('H:i:s') : 'N/A',
+                'Status' => $attendance->status ?? 'N/A',
             ];
         });
     }

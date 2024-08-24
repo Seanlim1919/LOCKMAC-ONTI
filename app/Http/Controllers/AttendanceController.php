@@ -11,16 +11,42 @@ use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon; // Add this at the top of your file
+
 
 class AttendanceController extends Controller
 {
     // Show Faculty Attendance
-    public function showFacultyAttendance()
+    public function showFacultyAttendance(Request $request)
     {
-        $facultyAttendances = Attendance::with('faculty')->get();
+        $date = now()->format('Y-m-d'); // Get the current date in 'YYYY-MM-DD' format
+
+        // Attempt to fetch today's attendance
+        $facultyAttendances = Attendance::whereHas('user', function($query) {
+            $query->where('role', 'faculty');
+        })
+        ->whereDate('entered_at', $date) // Filter by today's date
+        ->with('user')
+        ->orderBy('entered_at', 'asc') // Order by time
+        ->paginate(10); // Paginate results with 10 per page
+
+        // Check if no records are found for today's date
+        if ($facultyAttendances->isEmpty()) {
+            // If no records for today, fetch all attendance records
+            $facultyAttendances = Attendance::whereHas('user', function($query) {
+                $query->where('role', 'faculty');
+            })
+            ->with('user')
+            ->orderBy('entered_at', 'asc') // Order by time
+            ->paginate(10); // Paginate results with 10 per page
+        }
+
         return view('admin.attendance', compact('facultyAttendances'));
     }
 
+    
+    
     // Export Faculty Attendance
     public function exportFacultyAttendance()
     {
@@ -29,22 +55,39 @@ class AttendanceController extends Controller
 
     public function exportFacultyAttendancePdf()
     {
-        // Fetch the attendance data with related faculty
-        $facultyAttendances = Attendance::with('faculty')->get()->map(function ($attendance) {
+        // Fetch all attendance data with related faculty
+        $facultyAttendances = Attendance::with('user')->get();
+    
+        // Log the data to check if it's being retrieved correctly
+        Log::info($facultyAttendances);
+    
+        // Ensure the data is not empty
+        if ($facultyAttendances->isEmpty()) {
+            return response()->json(['message' => 'No attendance records found.'], 404);
+        }
+    
+        // Transform the data
+        $data = $facultyAttendances->map(function ($attendance) {
+            $enteredAt = Carbon::parse($attendance->entered_at);
+            $exitedAt = Carbon::parse($attendance->exited_at);
+    
             return [
-                'Faculty Name' => $attendance->faculty->first_name . ' ' . $attendance->faculty->last_name,
-                'Date' => $attendance->date->format('Y-m-d'),
-                'Time In' => $attendance->time_in->format('H:i:s'),
-                'Time Out' => $attendance->time_out ? $attendance->time_out->format('H:i:s') : 'N/A',
+                'Faculty Name' => $attendance->user ? ($attendance->user->first_name . ' ' . $attendance->user->last_name) : 'N/A',
+                'Date' => $enteredAt->format('Y-m-d'),
+                'Time In' => $enteredAt->format('H:i:s'),
+                'Time Out' => $exitedAt ? $exitedAt->format('H:i:s') : 'N/A',
             ];
         });
     
         // Load the view and pass the data
-        $pdf = Pdf::loadView('admin.pdf', ['facultyAttendances' => $facultyAttendances]);
+        $pdf = Pdf::loadView('admin.pdf', ['facultyAttendances' => $data]);
     
         // Return the PDF as a download
         return $pdf->download('faculty_attendance.pdf');
-    }    
+    }
+    
+
+    
 
     // Show Student Attendance with filters
     public function showStudentAttendance(Request $request)

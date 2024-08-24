@@ -16,11 +16,6 @@ class Attendance extends Model
         'exited_at',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function course()
     {
         return $this->belongsTo(Course::class);
@@ -30,4 +25,17 @@ class Attendance extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function faculty()
+    {
+        return $this->user()->where('role', 'faculty');
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'faculty_id');
+    }
+
+
+
 }
