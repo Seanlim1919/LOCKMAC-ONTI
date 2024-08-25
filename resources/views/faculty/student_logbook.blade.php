@@ -67,8 +67,10 @@
                 <td>{{ $attendance->student->student_number }}</td>
                 <td>{{ $attendance->student->first_name }} {{ $attendance->student->last_name }}</td>
                 <td>{{ $attendance->student->program }} - {{ $attendance->student->year }}{{ $attendance->student->section }}</td>
-                <td>{{ $attendance->pc_number }}</td>
-                <td>{{ $attendance->student->faculty->name ?? 'N/A' }}</td>
+                <td>{{ $attendance->student->pc_number }}</td>
+                <td>
+                {{ getFacultyTitle($attendance->faculty) }} {{ $attendance->faculty->first_name }} {{ $attendance->faculty->last_name ?? 'N/A' }}
+                </td>
                 <td>{{ $attendance->entered_at }}</td>
             </tr>
             @endforeach

@@ -10,7 +10,7 @@ class StudentAttendance extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id', 'entered_at', 'exited_at'
+        'student_id',  'faculty_id', 'entered_at', 'exited_at'
     ];
     
     protected $casts = [
@@ -26,4 +26,9 @@ class StudentAttendance extends Model
     {
         return $this->belongsTo(Course::class);
     }
+    public function faculty()
+    {
+        return $this->belongsTo(User::class, 'faculty_id');
+    }
+
 }

@@ -19,7 +19,6 @@ class Student extends Model
         'gender',
         'pc_number',
         'rfid',
-        
     ];
 
     public function attendances()
@@ -45,6 +44,11 @@ class Student extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(User::class, 'faculty_id');
     }
 
 }
