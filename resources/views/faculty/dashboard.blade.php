@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($hour = 7; $hour < 18; $hour++)
+            @for ($hour = 7; $hour <= 18; $hour++)
                 <tr>
                     <td>{{ formatTime($hour) }} - {{ formatTime($hour + 1) }}</td>
                     @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)

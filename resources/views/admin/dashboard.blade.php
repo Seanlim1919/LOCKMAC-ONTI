@@ -24,12 +24,11 @@
             <div class="info-box bg-danger text-white">
                 <div class="info-box-content">
                     <span class="info-box-text">Faculty Attendance Percentage</span> <br>
-                    <span class="info-box-number">{{number_format($attendancePercentage, 2) }}%</span>
+                    <span class="info-box-number">{{ number_format($attendancePercentage, 2) }}%</span>
                     <canvas id="attendanceChart"></canvas>
                 </div>
             </div>
         </div>
-
     </div>
     <table class="table table-bordered">
         <thead>
@@ -45,7 +44,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($hour = 7; $hour < 18; $hour++)
+            @for ($hour = 7; $hour <= 18; $hour++)
                 <tr>
                     <td>{{ formatTime($hour) }} - {{ formatTime($hour + 1) }}</td>
                     @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
@@ -56,31 +55,23 @@
                                 return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
                             });
                         @endphp
-                        @if ($scheduleForHour)
+                        @if ($scheduleForHour && $hour == (int) substr($scheduleForHour->start_time, 0, 2))
                             @php
                                 $startHour = (int) substr($scheduleForHour->start_time, 0, 2);
                                 $endHour = (int) substr($scheduleForHour->end_time, 0, 2);
                                 $rowspan = $endHour - $startHour;
                             @endphp
-                            @if ($hour == $startHour)
-                                <td class="time-slot" rowspan="{{ $rowspan }}" onclick="window.location='{{ route('admin.schedule.edit', $scheduleForHour->id) }}'" data-toggle="tooltip" data-placement="top" title="{{ $scheduleForHour->course_name }} with {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->first_name }} {{ $scheduleForHour->faculty->last_name }}">
-                                    <div class="highlight">
-                                        <div>
-                                            {{ $scheduleForHour->course_code }}<br>
-                                            {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }} <br>
-                                            {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
-                                        </div>
+                            <td class="time-slot" rowspan="{{ $rowspan }}" onclick="window.location='{{ route('admin.schedule.edit', $scheduleForHour->id) }}'" data-toggle="tooltip" data-placement="top" title="{{ $scheduleForHour->course_name }} with {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->first_name }} {{ $scheduleForHour->faculty->last_name }}">
+                                <div class="highlight">
+                                    <div>
+                                        {{ $scheduleForHour->course_code }}<br>
+                                        {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }} <br>
+                                        {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
                                     </div>
-                                </td>
-                            @endif
+                                </div>
+                            </td>
                         @else
-                            @if (!$schedules->first(function($schedule) use ($day, $hour) {
-                                $startHour = (int) substr($schedule->start_time, 0, 2);
-                                $endHour = (int) substr($schedule->end_time, 0, 2);
-                                return $schedule->day == $day && $hour >= $startHour && $hour < $endHour;
-                            }))
-                                <td class="time-slot"></td>
-                            @endif
+                            <td class="time-slot"></td>
                         @endif
                     @endforeach
                 </tr>
@@ -141,4 +132,3 @@ function formatTime($hour) {
     const ctx = document.getElementById('attendanceChart').getContext('2d');
     const attendanceChart = new Chart(ctx, config);
 </script>
-

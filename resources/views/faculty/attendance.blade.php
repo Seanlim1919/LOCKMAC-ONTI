@@ -4,7 +4,6 @@
 <div class="container">
     <h1>Student Attendance</h1>
 
-    <!-- Search Bar, Filter, and Export Button -->
     <div class="action-bar d-flex justify-content-end align-items-center position-relative">
         <form method="GET" action="{{ route('attendance.students') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ $search ?? '' }}" class="form-control" id="search-input" placeholder="Search">
@@ -86,7 +85,6 @@
         </form>
     </div>
 
-    <!-- Attendance Table -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -124,19 +122,17 @@
             filterOptions.style.display = filterOptions.style.display === 'none' ? 'block' : 'none';
         });
 
-        // Handle Enter key in search input
         searchInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault(); 
                 document.getElementById('search-form').submit();
             }
         });
 
-        // Optionally, handle Enter key in filter form as well
         document.getElementById('filter-form').addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default form submission
-                this.submit(); // Submit the filter form
+                event.preventDefault(); 
+                this.submit();
             }
         });
     });

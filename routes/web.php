@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');

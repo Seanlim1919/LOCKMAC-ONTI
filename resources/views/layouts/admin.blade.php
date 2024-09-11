@@ -26,7 +26,7 @@
             <h1>LockMac</h1>
         </div>
         <div class="right user-info">
-            <span>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
+            <span>{{ Auth::user()->first_name }} </span>
             <i class="fas fa-chevron-down dropdown-toggle"></i>
             <div class="dropdown-menu">
                 <a href="{{ route('logout') }}"

@@ -25,7 +25,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name', 'middle_name', 'last_name', 'email', 'password', 
-        'phone_number', 'gender', 'date_of_birth', 'role', 'rfid',
+        'phone_number', 'gender', 'date_of_birth', 'role', 'rfid_id',
     ];
 
     /**
@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     public function rfid()
     {
-        return $this->belongsTo(RFID::class, 'rfid_id');
+        return $this->hasOne(RFID::class, 'id', 'rfid_id');
     }
 
     public function students()

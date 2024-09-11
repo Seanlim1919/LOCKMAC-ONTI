@@ -34,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($hour = 7; $hour < 18; $hour++)
+            @for ($hour = 7; $hour <= 18; $hour++)
                 <tr>
                     <td>{{ formatTime($hour) }} - {{ formatTime($hour + 1) }}</td>
                     @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
@@ -52,25 +52,26 @@
                                 $rowspan = $endHour - $startHour;
                             @endphp
                             @if ($hour == $startHour)
-                            <td class="time-slot" rowspan="{{ $rowspan }}">
-                                <div class="highlight">
-                                    <div>
-                                        {{ $scheduleForHour->course_code }}<br>
-                                        {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
-                                        {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
-                                    </div>
-                                    <div class="actions">
-                                        <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-icon delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-
+                                <td class="time-slot" rowspan="{{ $rowspan }}">
+                                    <a href="{{ route('admin.schedule.edit', $scheduleForHour->id) }}" class="schedule-link">
+                                        <div class="highlight">
+                                            <div>
+                                                {{ $scheduleForHour->course_code }}<br>
+                                                {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
+                                                {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
+                                            </div>
+                                            <div class="actions">
+                                                <form action="{{ route('admin.schedule.destroy', $scheduleForHour->id) }}" method="POST" style="display:inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-icon delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
                             @endif
                         @else
                             @if (!$schedules->first(function($schedule) use ($day, $hour) {

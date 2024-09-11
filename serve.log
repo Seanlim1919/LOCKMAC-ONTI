@@ -1,0 +1,28 @@
+Starting Laravel development server: http://0.0.0.0:8000
+[Wed Aug 28 13:44:52 2024] PHP 8.2.20 Development Server (http://0.0.0.0:8000) started
+Starting Laravel development server: http://0.0.0.0:8000
+[Wed Aug 28 13:46:40 2024] PHP 8.2.20 Development Server (http://0.0.0.0:8000) started
+[Wed Aug 28 13:49:23 2024] 192.168.1.7:54427 Accepted
+[Wed Aug 28 13:49:26 2024] 192.168.1.7:54427 Closing
+[Wed Aug 28 13:49:26 2024] 192.168.1.7:54428 Accepted
+[Wed Aug 28 13:49:26 2024] 192.168.1.7:54428 [200]: GET /css/custom.css
+[Wed Aug 28 13:49:26 2024] 192.168.1.7:54428 Closing
+[Wed Aug 28 13:49:27 2024] 192.168.1.7:54431 Accepted
+[Wed Aug 28 13:49:27 2024] 192.168.1.7:54431 [200]: GET /favicon.ico
+[Wed Aug 28 13:49:27 2024] 192.168.1.7:54431 Closing
+[Wed Aug 28 13:49:30 2024] 192.168.1.7:54441 Accepted
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54441 Closing
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54442 Accepted
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54444 Accepted
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54443 Accepted
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54443 [200]: GET /images/cspclogo.png
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54442 [200]: GET /images/logo.png
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54444 [200]: GET /images/cspcccslogo.png
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54443 Closing
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54442 Closing
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54444 Closing
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54447 Accepted
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54447 [200]: GET /favicon.ico
+[Wed Aug 28 13:49:31 2024] 192.168.1.7:54447 Closing
+Starting Laravel development server: http://0.0.0.0:8000
+[Sun Sep  8 02:49:36 2024] PHP 8.2.20 Development Server (http://0.0.0.0:8000) started

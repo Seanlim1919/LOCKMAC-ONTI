@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SchedulesExport;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Carbon\Carbon;
 
 class ScheduleManagementController extends Controller
 {
@@ -33,32 +33,108 @@ class ScheduleManagementController extends Controller
     }
 
     public function store(Request $request)
-{
-    // Validate input
-    $validated = $request->validate([
-        'faculty_id' => 'required|exists:users,id',
-        'course_id' => 'required|exists:courses,id',
-        'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-        'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
-        'year' => 'required|in:1,2,3,4',
-        'section' => 'required|in:A,B,C,D,E,F,G,H',
-        'start_time' => 'required|date_format:H:i',
-        'end_time' => 'required|date_format:H:i',
-    ]);
+    {
+        $validated = $request->validate([
+            'faculty_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:courses,id',
+            'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
+            'year' => 'required|in:1,2,3,4',
+            'section' => 'required|in:A,B,C,D,E,F,G,H',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+    
+        $start = Carbon::createFromFormat('H:i', $request->start_time);
+        $end = Carbon::createFromFormat('H:i', $request->end_time);
+        $duration = $end->diffInMinutes($start);    
+    
+        if ($duration > 180) {
+            return back()->withErrors(['duration' => 'The schedule duration cannot exceed 3 hours.'])->withInput();
+        }
+    
+        $conflictingSchedule = Schedule::where('day', $request->day)
+            ->where(function($query) use ($request) {
+                $query->where(function($query) use ($request) {
+                    $query->where('start_time', '<', $request->end_time)
+                          ->where('end_time', '>', $request->start_time);
+                });
+            })
+            ->exists();
+    
+        if ($conflictingSchedule) {
+            return back()->withErrors(['conflict' => 'This schedule is already occupied.'])->withInput();
+        }
+    
+        \Log::info('Validated Data: ', $validated);
+    
+        $course = Course::find($request->course_id);
+        $validated['course_code'] = $course->course_code;
+        $validated['course_name'] = $course->course_name;
+    
+        Schedule::create($validated);
+    
+        return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
+    }
+    public function edit($id)
+    {
+        $schedule = Schedule::findOrFail($id); 
+        $faculties = User::where('role', 'faculty')->get(); 
+        $courses = Course::all();
+    
+        $schedule->start_time = null;
+        $schedule->end_time = null;
+    
+        return view('admin.schedule.edit', compact('schedule', 'faculties', 'courses'));
+    }
+    
+    
 
-    // Additional debug: Check validated data
-    \Log::info($validated);
-
-    $course = Course::find($request->course_id);
-    $validated['course_code'] = $course->course_code;
-    $validated['course_name'] = $course->course_name;
-
-    Schedule::create($validated);
-
-    return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
-}
-
-
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'faculty_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:courses,id',
+            'day' => 'required|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
+            'year' => 'required|in:1,2,3,4',
+            'section' => 'required|in:A,B,C,D,E,F,G,H',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+    
+        $start = Carbon::createFromFormat('H:i', $request->start_time);
+        $end = Carbon::createFromFormat('H:i', $request->end_time);
+        $duration = $end->diffInMinutes($start);
+    
+        if ($duration > 180) {
+            return back()->withErrors(['duration' => 'The schedule duration cannot exceed 3 hours.'])->withInput();
+        }
+    
+        $conflictingSchedule = Schedule::where('day', $request->day)
+            ->where(function($query) use ($request, $id) {
+                $query->where(function($query) use ($request, $id) {
+                    $query->where('start_time', '<', $request->end_time)
+                          ->where('end_time', '>', $request->start_time)
+                          ->where('id', '!=', $id);
+                });
+            })
+            ->exists();
+    
+        if ($conflictingSchedule) {
+            return back()->withErrors(['conflict' => 'This schedule is already occupied.'])->withInput();
+        }
+    
+        $schedule = Schedule::findOrFail($id);
+        $course = Course::find($request->course_id);
+        $validated['course_code'] = $course->course_code;
+        $validated['course_name'] = $course->course_name;
+    
+        $schedule->update($validated);
+    
+        return redirect()->route('admin.schedule.index')->with('success', 'Schedule updated successfully.');
+    }
+    
     public function destroy(Schedule $schedule)
     {
         $schedule->delete();

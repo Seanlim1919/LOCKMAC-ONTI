@@ -112,7 +112,7 @@
                 <th>Program & Section</th>
                 <th>PC Number</th>
                 <th>Actions</th>
-            </tr>
+            </tr> 
         </thead>
         <tbody>
             @foreach ($students as $student)

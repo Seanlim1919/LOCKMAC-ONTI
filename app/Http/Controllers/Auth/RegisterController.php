@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Rfid;
+use App\Models\RFID;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; // Import DB facade for transactions
 
 class RegisterController extends Controller
 {
@@ -49,29 +52,81 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
-
-        $rfidCode = $request->input('rfid_code');
-
-        // Log the RFID code if present
-        if ($rfidCode) {
-            Log::info('RFID code read successfully', ['rfid' => $rfidCode]);
-
-            // Save the RFID code to the `rfids` table
-            $rfid = Rfid::create([
-                'rfid_code' => $rfidCode,
-            ]);
-
-            // Associate the RFID with the user during creation
-            $user = $this->create($request->all() + ['rfid_id' => $rfid->id]);
+    
+        $rfidCode = $request->input('rfid');
+        Log::info('Received RFID code:', ['rfid_code' => $rfidCode]);
+    
+        // Normalize the RFID code for consistent comparison
+        $normalizedRfidCode = str_replace(' ', '', $rfidCode);
+        Log::info('Normalized RFID code:', ['rfid_code' => $normalizedRfidCode]);
+    
+        // Check if the RFID code already exists in the database
+        $existingRfid = RFID::where(DB::raw('REPLACE(rfid_code, " ", "")'), $normalizedRfidCode)
+                            ->orWhere('rfid_code', $rfidCode)
+                            ->first();
+    
+        if ($existingRfid) {
+            Log::info('RFID code already exists in the database.', ['rfid_id' => $existingRfid->id]);
+    
+            // Check if the RFID is already assigned to a user
+            $existingUser = User::where('rfid_id', $existingRfid->id)->first();
+            if ($existingUser) {
+                Log::error('RFID code is already assigned to another user.');
+                return redirect()->back()->withInput()->withErrors(['rfid' => 'This RFID code is already registered to another user']);
+            }
         } else {
-            Log::error('RFID code read failed');
-            return redirect()->back()->withErrors(['rfid_code' => 'RFID code is required']);
+            Log::info('RFID code does not exist. Proceeding to create a new RFID record.');
+    
+            // Start a database transaction
+            DB::beginTransaction();
+    
+            try {
+                // Create the RFID record
+                $rfid = RFID::create([
+                    'rfid_code' => $rfidCode,
+                ]);
+    
+                Log::info('RFID created.', ['rfid_id' => $rfid->id]);
+    
+                // Create the new user
+                $user = $this->create($request->all() + ['rfid_id' => $rfid->id]);
+    
+                Log::info('User created', ['user_id' => $user->id, 'rfid_id' => $user->rfid_id]);
+    
+                // Commit the transaction
+                DB::commit();
+    
+                // Log in the user
+                $this->guard()->login($user);
+    
+                // Redirect to the login page
+                return redirect($this->redirectPath());
+            } catch (\Exception $e) {
+                // Rollback the transaction if something goes wrong
+                DB::rollBack();
+                Log::error('Registration failed', ['error' => $e->getMessage()]);
+                return redirect()->back()->withInput()->withErrors(['rfid' => 'An error occurred during registration. Please try again.']);
+            }
         }
-
-        $this->guard()->login($user);
-
-        return redirect($this->redirectPath());
+    
+        // Redirect back to the registration form with error if RFID already exists
+        return redirect()->back()->withInput()->withErrors(['rfid' => 'RFID code already exists or is invalid.']);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * Get a validator for an incoming registration request.
@@ -85,14 +140,18 @@ class RegisterController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'ends_with:@cspc.edu.ph'],
             'phone_number' => ['required', 'string', 'max:20'],
             'gender' => ['required', 'string', 'in:male,female'],
-            'date_of_birth' => ['required', 'date'],
+            'date_of_birth' => ['required', 'date', 'date_format:Y-m-d'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'rfid' => ['nullable', 'string'],
+        ], [
+            'email.ends_with' => 'The email address must end with @cspc.edu.ph',
+            'date_of_birth.date_format' => 'The date of birth must be in correct format.',
         ]);
     }
+    
 
     /**
      * Create a new user instance after a valid registration.
@@ -102,6 +161,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        Log::info('Creating user with data:', $data);
+    
         return User::create([
             'first_name' => $data['first_name'],
             'middle_name' => $data['middle_name'],
@@ -111,20 +172,8 @@ class RegisterController extends Controller
             'gender' => $data['gender'],
             'date_of_birth' => $data['date_of_birth'],
             'password' => Hash::make($data['password']),
-            'role' => 'faculty', // Default role
+            'rfid_id' => $data['rfid_id'] ?? null, 
+            'role' => 'faculty',
         ]);
-
-            // Store RFID code
-        if (isset($data['rfid'])) {
-            $rfid = new Rfid;
-            $rfid->rfid_code = $data['rfid'];
-            $rfid->user_id = $user->id; // Assuming user_id is a foreign key in rfids table
-            $rfid->save();
-            Log::info('RFID registered: ' . $data['rfid']);
-        } else {
-            Log::error('RFID code was not provided during registration.');
-        }
-
-        return $user;
     }
 }

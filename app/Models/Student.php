@@ -2,53 +2,49 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    use HasFactory;
+    protected $table = 'students'; 
 
     protected $fillable = [
-        'student_number',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'program',
-        'year_and_section',
-        'gender',
-        'pc_number',
-        'rfid',
+        'student_number', 'first_name', 'middle_name', 'last_name', 'program', 'year', 'section', 'gender', 'pc_number', 'rfid_id'
     ];
 
-    public function attendances()
+    public function getFirstnameAttribute()
     {
-        return $this->hasMany(StudentAttendance::class);
+        return $this->attributes['first_name'];
     }
 
-    public function schedule()
+    public function setFirstnameAttribute($value)
     {
-        return $this->belongsTo(Schedule::class);
+        $this->attributes['first_name'] = $value;
+    }
+
+    public function getMiddlenameAttribute()
+    {
+        return $this->attributes['middle_name'];
+    }
+
+    public function setMiddlenameAttribute($value)
+    {
+        $this->attributes['middle_name'] = $value;
+    }
+
+    public function getLastnameAttribute()
+    {
+        return $this->attributes['last_name'];
+    }
+
+    public function setLastnameAttribute($value)
+    {
+        $this->attributes['last_name'] = $value;
     }
 
     public function rfid()
     {
-        return $this->belongsTo(RFID::class);
-    }
-
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function faculty()
-    {
-        return $this->belongsTo(User::class, 'faculty_id');
+    return $this->belongsTo(RFID::class);
     }
 
 }

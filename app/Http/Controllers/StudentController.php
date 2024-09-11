@@ -23,11 +23,11 @@ class StudentController extends Controller
         $scheduleId = $request->input('schedule_id');
 
         $currentUser = auth()->user();
-        $schedules = $currentUser->schedules; // Retrieve all schedules for the current user
+        $schedules = $currentUser->schedules;
 
         Log::info('Authenticated User:', [
             'user_id' => $currentUser->id,
-            'user_name' => $currentUser->first_name . ' ' . $currentUser->last_name,
+            'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
         ]);
 
         if ($schedules->isNotEmpty()) {
@@ -42,7 +42,6 @@ class StudentController extends Controller
             Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
         }
 
-        // Build query to get students matching all schedule criteria
         $studentsQuery = Student::query();
 
         if ($schedules->isNotEmpty()) {
@@ -50,22 +49,21 @@ class StudentController extends Controller
                 foreach ($schedules as $schedule) {
                     $query->orWhere(function($q) use ($schedule) {
                         $q->where('program', $schedule->program)
-                        ->where('year', $schedule->year)
-                        ->where('section', $schedule->section);
+                          ->where('year', $schedule->year)
+                          ->where('section', $schedule->section);
                     });
                 }
             });
         }
 
-        // Apply additional filters
         $studentsQuery->when($search, function ($query, $search) {
             return $query->where(function($q) use ($search) {
                 $q->where('first_name', 'LIKE', "%{$search}%")
-                ->orWhere('last_name', 'LIKE', "%{$search}%")
-                ->orWhere('student_number', 'LIKE', "%{$search}%")
-                ->orWhere('program', 'LIKE', "%{$search}%")
-                ->orWhere('year', 'LIKE', "%{$search}%")
-                ->orWhere('section', 'LIKE', "%{$search}%");
+                  ->orWhere('last_name', 'LIKE', "%{$search}%")
+                  ->orWhere('student_number', 'LIKE', "%{$search}%")
+                  ->orWhere('program', 'LIKE', "%{$search}%")
+                  ->orWhere('year', 'LIKE', "%{$search}%")
+                  ->orWhere('section', 'LIKE', "%{$search}%");
             });
         })
         ->when($gender, function ($query, $gender) {
@@ -83,117 +81,223 @@ class StudentController extends Controller
         ->orderBy('program')
         ->orderBy('year')
         ->orderBy('section')
-        ->orderBy('pc_number'); // Order by pc_number
+        ->orderBy('pc_number');
 
-        // Paginate students, possibly grouping by program, year, section
         $students = $studentsQuery->paginate(10);
 
-        $allSchedules = Schedule::all(); // Load all schedules for other purposes
+        $allSchedules = Schedule::all();
 
         return view('faculty.students.index', compact('students', 'search', 'gender', 'program', 'year', 'section', 'scheduleId', 'allSchedules'));
     }
-
 
     public function create()
     {
         return view('faculty.students.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'student_number' => 'required|unique:students',
-            'first_name' => 'required|regex:/^[a-zA-Z]{2,}$/',
-            'middle_name' => 'nullable|regex:/^[a-zA-Z]{2,}$/',
-            'last_name' => 'required|regex:/^[a-zA-Z]{2,}$/',
-            'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
-            'year' => 'required|in:1,2,3,4',
-            'section' => 'required|in:A,B,C,D,E,F,G,H',
-            'gender' => 'required|in:male,female',
-            'pc_number' => 'required|integer',
-            'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
-        ]);
 
-        // Check if the section already has 30 students
-        $sectionCount = Student::where('program', $request->input('program'))
-                                ->where('year', $request->input('year'))
-                                ->where('section', $request->input('section'))
-                                ->count();
+//STORE
 
-        if ($sectionCount >= 30) {
-            return redirect()->back()->withErrors(['section' => 'This section already has the maximum number of students (30).']);
+public function store(Request $request)
+{
+    \Log::info('Student Data:', $request->all());
+
+    $validatedData = $request->validate([
+        'student_number' => 'required|unique:students',
+        'firstname' => 'required|regex:/^[a-zA-Z\s]{2,}$/',
+        'middlename' => 'nullable|regex:/^[a-zA-Z\s]{2,}$/',
+        'lastname' => 'required|regex:/^[a-zA-Z\s]{2,}$/',
+        'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
+        'year' => 'required|in:1,2,3,4',
+        'section' => 'required|in:A,B,C,D,E,F,G,H',
+        'gender' => 'required|in:male,female',
+        'pc_number' => 'required|integer',
+        'rfid' => 'nullable|string'
+    ]);
+
+    \Log::info('Validated Data:', $validatedData);
+
+    $firstName = ucwords(strtolower($request->input('firstname')));
+    $middleName = $request->input('middlename') ? ucwords(strtolower($request->input('middlename'))) : null;
+    $lastName = ucwords(strtolower($request->input('lastname')));
+
+    $rfidCode = $request->input('rfid');
+    if ($rfidCode) {
+        $rfidCode = strtoupper(str_replace(' ', '', $rfidCode));
+    }
+
+    if ($rfidCode) {
+        $existingRfid = RFID::whereRaw('REPLACE(UPPER(rfid_code), " ", "") = ?', [$rfidCode])->first();
+        if ($existingRfid) {
+            return redirect()->back()->withErrors(['rfid' => 'This RFID is already assigned to another user.']);
         }
+    }
 
-        // Check for duplicate PC number within the same section
-        $duplicatePC = Student::where('program', $request->input('program'))
-                                ->where('year', $request->input('year'))
-                                ->where('section', $request->input('section'))
-                                ->where('pc_number', $request->input('pc_number'))
-                                ->exists();
+    $sectionCount = Student::where('program', $request->input('program'))
+                            ->where('year', $request->input('year'))
+                            ->where('section', $request->input('section'))
+                            ->count();
 
-        if ($duplicatePC) {
-            return redirect()->back()->withErrors(['pc_number' => 'This PC number is already assigned to another student in the same section.']);
-        }
+    if ($sectionCount >= 30) {
+        return redirect()->back()->withErrors(['section' => 'This section already has the maximum number of students (30).']);
+    }
+
+    $duplicatePC = Student::where('program', $request->input('program'))
+                            ->where('year', $request->input('year'))
+                            ->where('section', $request->input('section'))
+                            ->where('pc_number', $request->input('pc_number'))
+                            ->exists();
+
+    if ($duplicatePC) {
+        return redirect()->back()->withErrors(['pc_number' => 'This PC number is already assigned to another student in the same section.']);
+    }
+
+    try {
+        \DB::beginTransaction();
 
         $rfidId = null;
-        if ($request->filled('rfid_code')) {
-            $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
-            $rfidId = $rfid ? $rfid->id : null;
+        if ($rfidCode) {
+            $rfid = RFID::create(['rfid_code' => $rfidCode]);
+            $rfidId = $rfid->id;
         }
 
-        Student::create(array_merge($request->all(), ['rfid_id' => $rfidId]));
+        Student::create([
+            'student_number' => $request->input('student_number'),
+            'first_name' => $firstName,
+            'middle_name' => $middleName,
+            'last_name' => $lastName,
+            'program' => $request->input('program'),
+            'year' => $request->input('year'),
+            'section' => $request->input('section'),
+            'gender' => $request->input('gender'),
+            'pc_number' => $request->input('pc_number'),
+            'rfid_id' => $rfidId
+        ]);
 
-        return redirect()->route('students.index')->with('success', 'Student created successfully.');
+        \DB::commit();
+        \Log::info('Student created successfully.');
+    } catch (\Exception $e) {
+        \DB::rollBack();
+        \Log::error('Failed to create student:', ['error' => $e->getMessage()]);
+        return redirect()->back()->withErrors(['error' => 'Failed to create student.']);
     }
+
+    return redirect()->route('students.index')->with('success', 'Student created successfully.');
+}
+
+
+
+
+
+
+
+    
+    
+    
+    
+    //update
 
     public function update(Request $request, Student $student)
     {
-        $request->validate([
+        \Log::info('Student Data:', $request->all());
+    
+        $validatedData = $request->validate([
             'student_number' => 'required|unique:students,student_number,' . $student->id,
-            'first_name' => 'required|regex:/^[a-zA-Z]{2,}$/',
-            'middle_name' => 'nullable|regex:/^[a-zA-Z]{2,}$/',
-            'last_name' => 'required|regex:/^[a-zA-Z]{2,}$/',
+            'firstname' => 'required|regex:/^[a-zA-Z\s]{2,}$/',
+            'middlename' => 'nullable|regex:/^[a-zA-Z\s]{2,}$/',
+            'lastname' => 'required|regex:/^[a-zA-Z\s]{2,}$/',
             'program' => 'required|in:BSIT,BLIS,BSCS,BSIS',
             'year' => 'required|in:1,2,3,4',
             'section' => 'required|in:A,B,C,D,E,F,G,H',
             'gender' => 'required|in:male,female',
             'pc_number' => 'required|integer',
-            'rfid_code' => 'nullable|exists:rfids,rfid_code' // Validate RFID code
+            'rfid' => 'nullable|string'
         ]);
-
-        // Check if the section already has 30 students
+    
+        \Log::info('Validated Data:', $validatedData);
+    
+        $firstName = ucwords(strtolower($request->input('firstname')));
+        $middleName = $request->input('middlename') ? ucwords(strtolower($request->input('middlename'))) : null;
+        $lastName = ucwords(strtolower($request->input('lastname')));
+    
         $sectionCount = Student::where('program', $request->input('program'))
                                 ->where('year', $request->input('year'))
                                 ->where('section', $request->input('section'))
-                                ->where('id', '!=', $student->id) // Exclude the current student
+                                ->where('id', '!=', $student->id)
                                 ->count();
-
+    
         if ($sectionCount >= 30) {
             return redirect()->back()->withErrors(['section' => 'This section already has the maximum number of students (30).']);
         }
-
-        // Check for duplicate PC number within the same section
+    
         $duplicatePC = Student::where('program', $request->input('program'))
                                 ->where('year', $request->input('year'))
                                 ->where('section', $request->input('section'))
                                 ->where('pc_number', $request->input('pc_number'))
-                                ->where('id', '!=', $student->id) // Exclude the current student
+                                ->where('id', '!=', $student->id)
                                 ->exists();
-
+    
         if ($duplicatePC) {
             return redirect()->back()->withErrors(['pc_number' => 'This PC number is already assigned to another student in the same section.']);
         }
-
-        $rfidId = null;
-        if ($request->filled('rfid_code')) {
-            $rfid = RFID::where('rfid_code', $request->input('rfid_code'))->first();
-            $rfidId = $rfid ? $rfid->id : null;
+    
+        $newRfidCode = str_replace(' ', '', $request->input('rfid'));
+    
+        if ($newRfidCode) {
+            $existingRfid = RFID::whereRaw('REPLACE(rfid_code, " ", "") = ?', [$newRfidCode])->first();
+    
+            if ($existingRfid && $existingRfid->id !== $student->rfid_id) {
+                return redirect()->back()->withErrors(['rfid' => 'The RFID code is already assigned to another student.']);
+            }
         }
-
-        $student->update(array_merge($request->all(), ['rfid_id' => $rfidId]));
-
+    
+        try {
+            \DB::beginTransaction();
+    
+            $rfidId = null;
+            if ($newRfidCode) {
+                $rfid = RFID::whereRaw('REPLACE(rfid_code, " ", "") = ?', [$newRfidCode])->first();
+    
+                if (!$rfid) {
+                    $rfid = RFID::create(['rfid_code' => $newRfidCode]);
+                }
+                $rfidId = $rfid->id;
+            }
+    
+            $student->update([
+                'student_number' => $request->input('student_number'),
+                'first_name' => $firstName,
+                'middle_name' => $middleName,
+                'last_name' => $lastName,
+                'program' => $request->input('program'),
+                'year' => $request->input('year'),
+                'section' => $request->input('section'),
+                'gender' => $request->input('gender'),
+                'pc_number' => $request->input('pc_number'),
+                'rfid_id' => $rfidId
+            ]);
+    
+            if ($student->rfid_id) {
+                $oldRfid = RFID::find($student->rfid_id);
+    
+                if ($oldRfid && !Student::where('rfid_id', $oldRfid->id)->exists()) {
+                    $oldRfid->delete();
+                }
+            }
+    
+            \DB::commit();
+            \Log::info('Student updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Failed to update student:', ['error' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => 'Failed to update student.']);
+        }
+    
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
+    
+    
+    
 
     public function edit(Student $student)
     {
@@ -202,46 +306,53 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
-        $student->delete();
+        if ($student->rfid) {
+            $student->rfid->delete();
+        }
+            $student->delete();
+    
         return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
+    
+    
+
     public function import(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,csv,ods,xls'
         ]);
-
+    
         $path = $request->file('file')->getRealPath();
         $spreadsheet = IOFactory::load($path);
         $worksheet = $spreadsheet->getActiveSheet();
         $rows = $worksheet->toArray();
         $errors = [];
-
+    
         foreach ($rows as $index => $row) {
             if ($index == 0) {
-                // Skip header row
                 continue;
             }
+    
 
-            // Skip rows with invalid names
-            if (!preg_match('/^[a-zA-Z]{2,}$/', $row[1]) || 
-                !preg_match('/^[a-zA-Z]{2,}$/', $row[2]) || 
-                !preg_match('/^[a-zA-Z]{2,}$/', $row[3])) {
+            if (!preg_match('/^[\p{L}\'\- ]+$/u', $row[1]) || 
+                !preg_match('/^[\p{L}\'\- ]+$/u', $row[2]) || 
+                !preg_match('/^[\p{L}\'\- ]+$/u', $row[3])) {
                 $errors[] = "Invalid name format in row $index";
                 continue;
             }
-
+    
             $studentData = [
                 'student_number' => $row[0],
-                'first_name' => $row[1],
-                'middle_name' => $row[2],
-                'last_name' => $row[3],
+                'first_name' => $row[1],     
+                'middle_name' => $row[2],     
+                'last_name' => $row[3],      
                 'program' => $row[4],
                 'year' => substr($row[5], 0, 1),
                 'section' => substr($row[5], 1),
                 'pc_number' => $row[6],
             ];
-
+            
+    
             try {
                 Student::create($studentData);
             } catch (\Exception $e) {
@@ -249,11 +360,11 @@ class StudentController extends Controller
                 Log::error("Failed to create student: " . json_encode($studentData) . " Error: " . $e->getMessage());
             }
         }
-
+    
         if (!empty($errors)) {
             return redirect()->route('students.index')->with('errors', $errors);
         }
-
+    
         return redirect()->route('students.index')->with('success', 'Students imported successfully.');
     }
 
@@ -269,17 +380,16 @@ class StudentController extends Controller
         $text = $pdf->getText();
         $errors = [];
 
-        // Remove any unwanted characters and clean up the text
         $lines = explode("\n", $text);
         Log::info("PDF Lines: " . json_encode($lines));
+
         foreach ($lines as $line) {
-            // Regular expression to match the required format
             if (preg_match('/(\d{6})([A-Z][a-zA-Z]{1,})\s*([A-Z][a-zA-Z]{1,})\s*([A-Z][a-zA-Z]{1,})\s*(BSIT|BLIS|BSCS|BSIS)\s*(\d)([A-H])\s*(\d+)/', $line, $matches)) {
                 $data = [
                     'student_number' => $matches[1],
-                    'first_name' => $matches[2],
-                    'middle_name' => $matches[3],
-                    'last_name' => $matches[4],
+                    'firstname' => $matches[2],
+                    'middlename' => $matches[3],
+                    'lastname' => $matches[4],
                     'program' => $matches[5],
                     'year' => $matches[6],
                     'section' => $matches[7],

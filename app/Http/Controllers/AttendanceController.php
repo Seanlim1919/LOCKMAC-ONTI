@@ -17,29 +17,25 @@ use Carbon\Carbon; // Add this at the top of your file
 
 class AttendanceController extends Controller
 {
-    // Show Faculty Attendance
     public function showFacultyAttendance(Request $request)
     {
-        $date = now()->format('Y-m-d'); // Get the current date in 'YYYY-MM-DD' format
+        $date = now()->format('Y-m-d'); 
 
-        // Attempt to fetch today's attendance
         $facultyAttendances = Attendance::whereHas('user', function($query) {
             $query->where('role', 'faculty');
         })
-        ->whereDate('entered_at', $date) // Filter by today's date
+        ->whereDate('entered_at', $date) 
         ->with('user')
-        ->orderBy('entered_at', 'asc') // Order by time
-        ->paginate(10); // Paginate results with 10 per page
+        ->orderBy('entered_at', 'asc') 
+        ->paginate(10); 
 
-        // Check if no records are found for today's date
         if ($facultyAttendances->isEmpty()) {
-            // If no records for today, fetch all attendance records
             $facultyAttendances = Attendance::whereHas('user', function($query) {
                 $query->where('role', 'faculty');
             })
             ->with('user')
-            ->orderBy('entered_at', 'asc') // Order by time
-            ->paginate(10); // Paginate results with 10 per page
+            ->orderBy('entered_at', 'asc') 
+            ->paginate(10); 
         }
 
         return view('admin.attendance', compact('facultyAttendances'));
@@ -47,7 +43,6 @@ class AttendanceController extends Controller
 
     
     
-    // Export Faculty Attendance
     public function exportFacultyAttendance()
     {
         return Excel::download(new FacultyAttendanceExport, 'faculty_attendance.xlsx');
@@ -55,18 +50,14 @@ class AttendanceController extends Controller
 
     public function exportFacultyAttendancePdf()
     {
-        // Fetch all attendance data with related faculty
         $facultyAttendances = Attendance::with('user')->get();
     
-        // Log the data to check if it's being retrieved correctly
         Log::info($facultyAttendances);
     
-        // Ensure the data is not empty
         if ($facultyAttendances->isEmpty()) {
             return response()->json(['message' => 'No attendance records found.'], 404);
         }
     
-        // Transform the data
         $data = $facultyAttendances->map(function ($attendance) {
             $enteredAt = Carbon::parse($attendance->entered_at);
             $exitedAt = Carbon::parse($attendance->exited_at);
@@ -79,56 +70,79 @@ class AttendanceController extends Controller
             ];
         });
     
-        // Load the view and pass the data
         $pdf = Pdf::loadView('admin.pdf', ['facultyAttendances' => $data]);
     
-        // Return the PDF as a download
         return $pdf->download('faculty_attendance.pdf');
     }
     
 
     
 
-    // Show Student Attendance with filters
     public function showStudentAttendance(Request $request)
     {
-        // Fetch filters
         $date = $request->input('date');
         $section = $request->input('section');
         $course = $request->input('course');
-
-        // Query student attendance based on the filters
+    
+        $currentUser = auth()->user();
+        
+        $schedules = $currentUser->schedules;
+    
+        Log::info('Authenticated User:', [
+            'user_id' => $currentUser->id,
+            'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
+        ]);
+    
+        if ($schedules->isNotEmpty()) {
+            foreach ($schedules as $schedule) {
+                Log::info('Current Schedule:', [
+                    'program' => $schedule->program,
+                    'year' => $schedule->year,
+                    'section' => $schedule->section
+                ]);
+            }
+        } else {
+            Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
+        }
+    
         $query = StudentAttendance::with(['student', 'course']);
-
-        if ($date) {
+            if ($schedules->isNotEmpty()) {
+            $query->whereHas('student', function ($q) use ($schedules) {
+                $q->where(function($query) use ($schedules) {
+                    foreach ($schedules as $schedule) {
+                        $query->orWhere(function($q) use ($schedule) {
+                            $q->where('program', $schedule->program)
+                              ->where('year', $schedule->year)
+                              ->where('section', $schedule->section);
+                        });
+                    }
+                });
+            });
+        }
+            if ($date) {
             $query->whereDate('entered_at', $date);
         }
-
         if ($section) {
             $query->whereHas('student', function ($q) use ($section) {
                 $q->where('section', $section);
             });
         }
-
+    
         if ($course) {
             $query->whereHas('course', function ($q) use ($course) {
                 $q->where('id', $course);
             });
         }
-
-        $studentAttendances = $query->get();
-
-        // Get sections and courses for filters
-        $sections = Student::distinct()->pluck('section');
-        $courses = Course::all(); // Fetch all courses
-
+            $studentAttendances = $query->get();
+            $sections = Student::distinct()->pluck('section');
+        $courses = Course::all(); 
+    
         return view('faculty.attendance', compact('studentAttendances', 'date', 'section', 'course', 'sections', 'courses'));
     }
+    
 
-    // Index for Student Attendance with filters
     public function index(Request $request)
     {
-        // Get filters
         $date = $request->input('date');
         $course = $request->input('course');
         $program = $request->input('program');
@@ -137,7 +151,6 @@ class AttendanceController extends Controller
         $search = $request->input('search');
         
 
-        // Query to get student attendances based on filters
         $query = StudentAttendance::with(['student', 'course'])
             ->when($date, function ($q) use ($date) {
                 $q->whereDate('entered_at', $date);
@@ -170,7 +183,6 @@ class AttendanceController extends Controller
 
         $studentAttendances = $query->get();
 
-        // Get sections and courses for filters
         $courses = Course::all();
         $sections = Student::distinct()->pluck('section');
         
@@ -178,7 +190,6 @@ class AttendanceController extends Controller
         return view('faculty.attendance', compact('studentAttendances', 'courses', 'sections', 'search'));
     }
 
-    // Export Student Attendance based on filters
     public function export(Request $request)
     {
         $date = $request->input('date');
@@ -193,15 +204,13 @@ class AttendanceController extends Controller
 
     public function exportLogbookPdf(Request $request)
     {
-        // Fetch filters
         $date = $request->input('date');
         $section = $request->input('section');
         $course = $request->input('course');
         $program = $request->input('program');
         $year = $request->input('year');
     
-        // Query student attendance based on the filters
-        $query = StudentAttendance::with(['student', 'course', 'faculty']); // Ensure faculty is included
+        $query = StudentAttendance::with(['student', 'course', 'faculty']); 
     
         if ($date) {
             $query->whereDate('entered_at', $date);
@@ -233,11 +242,9 @@ class AttendanceController extends Controller
     
         $studentAttendances = $query->get();
     
-        // Load the view and pass the data to the PDF
         $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
                     ->setPaper('a4', 'landscape');
     
-        // Download the PDF file
         return $pdf->download('student_logbook.pdf');
     }
 

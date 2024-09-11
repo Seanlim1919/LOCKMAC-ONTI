@@ -15,15 +15,13 @@ class StudentsTableSeeder extends Seeder
         $sections = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
         $genders = ['male', 'female'];
 
-        // Calculate the total number of students
         $totalStudents = count($programs) * count($years) * count($sections) * 30;
 
         $rfidIds = [];
 
-        // Populate the `rfids` table with enough entries
         for ($i = 1; $i <= $totalStudents; $i++) {
             $rfidId = DB::table('rfids')->insertGetId([
-                'rfid_code' => Str::random(10), // Generate a random RFID code
+                'rfid_code' => Str::random(10), 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -32,16 +30,15 @@ class StudentsTableSeeder extends Seeder
 
         $rfidIndex = 0;
 
-        // Assign each student a unique RFID
         foreach ($programs as $program) {
             foreach ($years as $year) {
                 foreach ($sections as $section) {
-                    $pcNumbers = range(1, 30); // Create an array of PC numbers from 1 to 30
-                    shuffle($pcNumbers); // Shuffle to randomize the PC assignment
+                    $pcNumbers = range(1, 30);
+                    shuffle($pcNumbers); 
 
-                    for ($i = 1; $i <= 30; $i++) { // Limit each section to 30 students
+                    for ($i = 1; $i <= 30; $i++) { 
                         DB::table('students')->insert([
-                            'student_number' => 'S' . Str::random(6), // Unique student number
+                            'student_number' => 'S' . Str::random(6), 
                             'first_name' => 'FirstName' . $i,
                             'middle_name' => 'MiddleName' . $i,
                             'last_name' => 'LastName' . $i,
@@ -49,8 +46,8 @@ class StudentsTableSeeder extends Seeder
                             'year' => $year,
                             'section' => $section,
                             'gender' => $genders[array_rand($genders)],
-                            'pc_number' => $pcNumbers[$i - 1], // Assign a unique PC number within the section
-                            'rfid_id' => $rfidIds[$rfidIndex], // Assign the RFID
+                            'pc_number' => $pcNumbers[$i - 1], 
+                            'rfid_id' => $rfidIds[$rfidIndex], 
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);

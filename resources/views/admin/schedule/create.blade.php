@@ -2,7 +2,18 @@
 
 @section('content')
 <div class="form-container">
+
     <h2>Add New Schedule</h2>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
     <form action="{{ route('admin.schedule.store') }}" method="POST">
         @csrf
         <div class="form-group">
@@ -86,10 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
     programSelect.addEventListener('change', function () {
         const selectedProgram = this.value;
         
-        // Clear the current course options
         courseSelect.innerHTML = '';
 
-        // Filter and add relevant course options
         courseOptions.forEach(function(option) {
             if (option.getAttribute('data-program') === selectedProgram) {
                 courseSelect.appendChild(option);
@@ -97,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Trigger change event to filter courses initially
     programSelect.dispatchEvent(new Event('change'));
 });
 </script>
