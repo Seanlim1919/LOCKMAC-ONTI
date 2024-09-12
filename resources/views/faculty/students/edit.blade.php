@@ -151,7 +151,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
 $(document).ready(function() {
-    let socket = io('http://localhost:5000');
+    let socket = io('http://172.30.109.177:5000');
 
     socket.on('connect', function() {
         console.log('Connected to server');

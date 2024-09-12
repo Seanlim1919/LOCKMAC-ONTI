@@ -191,9 +191,9 @@
 @section('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
-let socket = io('http://172.30.185.147:5000');
+let socket = io('http://172.30.109.177:5000');
 
-socket.on('connect', function() {
+socket.on('connect', function() {   
     console.log('Connected to server');
 });
 

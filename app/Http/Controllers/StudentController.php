@@ -21,30 +21,20 @@ class StudentController extends Controller
         $year = $request->input('year');
         $section = $request->input('section');
         $scheduleId = $request->input('schedule_id');
-
+    
         $currentUser = auth()->user();
         $schedules = $currentUser->schedules;
-
+    
         Log::info('Authenticated User:', [
             'user_id' => $currentUser->id,
             'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
         ]);
-
-        if ($schedules->isNotEmpty()) {
-            foreach ($schedules as $schedule) {
-                Log::info('Current Schedule:', [
-                    'program' => $schedule->program,
-                    'year' => $schedule->year,
-                    'section' => $schedule->section
-                ]);
-            }
-        } else {
-            Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
-        }
-
+    
+        // Initialize the query for students
         $studentsQuery = Student::query();
-
+    
         if ($schedules->isNotEmpty()) {
+            // Filter by schedules if they exist
             $studentsQuery->where(function($query) use ($schedules) {
                 foreach ($schedules as $schedule) {
                     $query->orWhere(function($q) use ($schedule) {
@@ -54,8 +44,12 @@ class StudentController extends Controller
                     });
                 }
             });
+        } else {
+            // No schedules found, return an empty result set
+            $studentsQuery->whereRaw('1 = 0');
         }
-
+    
+        // Apply additional filters
         $studentsQuery->when($search, function ($query, $search) {
             return $query->where(function($q) use ($search) {
                 $q->where('first_name', 'LIKE', "%{$search}%")
@@ -82,17 +76,13 @@ class StudentController extends Controller
         ->orderBy('year')
         ->orderBy('section')
         ->orderBy('pc_number');
-
+    
+        // Paginate the results
         $students = $studentsQuery->paginate(10);
-
+    
         $allSchedules = Schedule::all();
-
+    
         return view('faculty.students.index', compact('students', 'search', 'gender', 'program', 'year', 'section', 'scheduleId', 'allSchedules'));
-    }
-
-    public function create()
-    {
-        return view('faculty.students.create');
     }
 
 

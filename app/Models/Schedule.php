@@ -31,17 +31,10 @@ class Schedule extends Model
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
-
-    public function student()
-    {
-        return $this->belongsTo(Student::class, 'student_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'faculty_id');
-    }
     
 
+    public function attendance()
+    {
+        return $this->hasMany(StudentAttendance::class, 'faculty_id', 'faculty_id');
+    }
 }
-

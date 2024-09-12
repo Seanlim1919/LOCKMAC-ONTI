@@ -12,11 +12,13 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon; // Add this at the top of your file
+use Carbon\Carbon; 
 
 
 class AttendanceController extends Controller
 {
+
+
     public function showFacultyAttendance(Request $request)
     {
         $date = now()->format('Y-m-d'); 
@@ -83,30 +85,34 @@ class AttendanceController extends Controller
         $date = $request->input('date');
         $section = $request->input('section');
         $course = $request->input('course');
-    
-        $currentUser = auth()->user();
         
+        $currentUser = auth()->user();
         $schedules = $currentUser->schedules;
-    
+        
         Log::info('Authenticated User:', [
             'user_id' => $currentUser->id,
             'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
         ]);
-    
+        
         if ($schedules->isNotEmpty()) {
             foreach ($schedules as $schedule) {
                 Log::info('Current Schedule:', [
                     'program' => $schedule->program,
                     'year' => $schedule->year,
-                    'section' => $schedule->section
+                    'section' => $schedule->section,
+                    'schedule_id' => $schedule->id,
+                    'course_code' => $schedule->course_code, 
+                    'course_name' => $schedule->course_name
                 ]);
             }
         } else {
             Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
         }
-    
-        $query = StudentAttendance::with(['student', 'course']);
-            if ($schedules->isNotEmpty()) {
+        
+        $query = StudentAttendance::with(['student', 'course'])
+            ->where('faculty_id', $currentUser->id);
+        
+        if ($schedules->isNotEmpty()) {
             $query->whereHas('student', function ($q) use ($schedules) {
                 $q->where(function($query) use ($schedules) {
                     foreach ($schedules as $schedule) {
@@ -118,27 +124,45 @@ class AttendanceController extends Controller
                     }
                 });
             });
+        } else {
+            $query->whereRaw('1 = 0'); // This condition ensures no records are returned
         }
-            if ($date) {
+        
+        if ($date) {
             $query->whereDate('entered_at', $date);
         }
+        
         if ($section) {
             $query->whereHas('student', function ($q) use ($section) {
                 $q->where('section', $section);
             });
         }
-    
+        
         if ($course) {
             $query->whereHas('course', function ($q) use ($course) {
                 $q->where('id', $course);
             });
         }
-            $studentAttendances = $query->get();
-            $sections = Student::distinct()->pluck('section');
-        $courses = Course::all(); 
     
-        return view('faculty.attendance', compact('studentAttendances', 'date', 'section', 'course', 'sections', 'courses'));
+        $studentAttendances = $query->orderBy('entered_at', 'asc')->get();
+        
+        $sections = Student::distinct()->pluck('section');
+        $courses = Course::all();
+        
+        $userSchedules = $schedules->map(function ($schedule) {
+            return [
+                'course_code' => $schedule->course_code,
+                'course_name' => $schedule->course_name,
+            ];
+        });
+        
+        return view('faculty.attendance', compact('studentAttendances', 'date', 'section', 'course', 'sections', 'courses', 'userSchedules'));
     }
+    
+    
+    
+    
+    
     
 
     public function index(Request $request)
@@ -150,13 +174,48 @@ class AttendanceController extends Controller
         $section = $request->input('section');
         $search = $request->input('search');
         
-
-        $query = StudentAttendance::with(['student', 'course'])
+        $currentUser = auth()->user();
+        
+        $schedules = $currentUser->schedules;
+        
+        Log::info('Authenticated User:', [
+            'user_id' => $currentUser->id,
+            'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
+        ]);
+        
+        if ($schedules->isNotEmpty()) {
+            foreach ($schedules as $schedule) {
+                Log::info('Current Schedule:', [
+                    'program' => $schedule->program,
+                    'year' => $schedule->year,
+                    'section' => $schedule->section,
+                    'schedule_id' => $schedule->id
+                ]);
+            }
+        } else {
+            Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
+        }
+        
+        $query = StudentAttendance::with(['student', 'schedule.course'])
+            ->where('faculty_id', $currentUser->id)
+            ->whereHas('student', function ($q) use ($schedules) {
+                $q->where(function ($query) use ($schedules) {
+                    foreach ($schedules as $schedule) {
+                        $query->orWhere(function ($q) use ($schedule) {
+                            $q->where('program', $schedule->program)
+                              ->where('year', $schedule->year)
+                              ->where('section', $schedule->section);
+                        });
+                    }
+                });
+            })
             ->when($date, function ($q) use ($date) {
                 $q->whereDate('entered_at', $date);
             })
             ->when($course, function ($q) use ($course) {
-                $q->where('course_id', $course);
+                $q->whereHas('schedule', function ($q) use ($course) {
+                    $q->where('course_id', $course);
+                });
             })
             ->when($program, function ($q) use ($program) {
                 $q->whereHas('student', function ($q) use ($program) {
@@ -179,17 +238,20 @@ class AttendanceController extends Controller
                       ->orWhere('last_name', 'like', "%{$search}%")
                       ->orWhere('student_number', 'like', "%{$search}%");
                 });
-            });
-
+            })
+            // Sorting by entered_at time in ascending order
+            ->orderBy('entered_at', 'asc');
+        
         $studentAttendances = $query->get();
-
+        
         $courses = Course::all();
         $sections = Student::distinct()->pluck('section');
         
-
-        return view('faculty.attendance', compact('studentAttendances', 'courses', 'sections', 'search'));
+        return view('faculty.attendance', compact('studentAttendances', 'courses', 'sections', 'search', 'date', 'section', 'course'));
     }
-
+    
+    
+    
     public function export(Request $request)
     {
         $date = $request->input('date');
@@ -202,50 +264,53 @@ class AttendanceController extends Controller
     }
 
 
-    public function exportLogbookPdf(Request $request)
-    {
-        $date = $request->input('date');
-        $section = $request->input('section');
-        $course = $request->input('course');
-        $program = $request->input('program');
-        $year = $request->input('year');
-    
-        $query = StudentAttendance::with(['student', 'course', 'faculty']); 
-    
-        if ($date) {
-            $query->whereDate('entered_at', $date);
-        }
-    
-        if ($section) {
-            $query->whereHas('student', function ($q) use ($section) {
-                $q->where('section', $section);
-            });
-        }
-    
-        if ($course) {
-            $query->whereHas('course', function ($q) use ($course) {
-                $q->where('id', $course);
-            });
-        }
-    
-        if ($program) {
-            $query->whereHas('student', function ($q) use ($program) {
-                $q->where('program', $program);
-            });
-        }
-    
-        if ($year) {
-            $query->whereHas('student', function ($q) use ($year) {
-                $q->where('year', $year);
-            });
-        }
-    
-        $studentAttendances = $query->get();
-    
-        $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
-                    ->setPaper('a4', 'landscape');
-    
-        return $pdf->download('student_logbook.pdf');
+public function exportLogbookPdf(Request $request)
+{
+    $date = $request->input('date');
+    $section = $request->input('section');
+    $course = $request->input('course');
+    $program = $request->input('program');
+    $year = $request->input('year');
+
+    $currentUser = auth()->user();
+
+    $query = StudentAttendance::with(['student', 'course', 'faculty'])
+        ->where('faculty_id', $currentUser->id); 
+
+    if ($date) {
+        $query->whereDate('entered_at', $date);
     }
+
+    if ($section) {
+        $query->whereHas('student', function ($q) use ($section) {
+            $q->where('section', $section);
+        });
+    }
+
+    if ($course) {
+        $query->whereHas('course', function ($q) use ($course) {
+            $q->where('id', $course);
+        });
+    }
+
+    if ($program) {
+        $query->whereHas('student', function ($q) use ($program) {
+            $q->where('program', $program);
+        });
+    }
+
+    if ($year) {
+        $query->whereHas('student', function ($q) use ($year) {
+            $q->where('year', $year);
+        });
+    }
+
+    $studentAttendances = $query->get();
+
+    $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
+              ->setPaper('a4', 'landscape');
+
+    return $pdf->download('student_logbook.pdf');
+}
 
 }

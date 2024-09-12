@@ -20,4 +20,12 @@ class Course extends Model
     {
         return $this->belongsToMany(Student::class, 'course_student', 'course_id', 'student_id');
     }
+    public function studentAttendances()
+{
+    return $this->hasMany(StudentAttendance::class);
+}
+public function schedules()
+{
+    return $this->hasMany(Schedule::class, 'course_id');
+}
 }

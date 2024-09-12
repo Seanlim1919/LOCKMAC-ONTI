@@ -17,19 +17,17 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        // Fetching all faculties with the 'faculty' role
         $faculties = User::where('role', 'faculty')->get();
         $facultyCount = $faculties->count();
-        $studentCount = Student::count(); // Counting total students
-        $courseCount = Course::count(); // Counting total courses
-        $attendancePercentage = $this->getAttendancePercentage(); // Fetching overall attendance percentage
+        $studentCount = Student::count(); 
+        $courseCount = Course::count(); 
+        $attendancePercentage = $this->getAttendancePercentage(); 
 
         $faculty_id = $request->input('faculty_id');
         $schedules = Schedule::when($faculty_id, function ($query, $faculty_id) {
             return $query->where('faculty_id', $faculty_id);
         })->with('course', 'faculty')->get();
 
-        // Get monthly attendance data for faculty
         $monthlyAttendance = $this->getMonthlyAttendanceData();
 
         return view('admin.dashboard', compact(
@@ -47,20 +45,18 @@ class AdminController extends Controller
     {
         $currentMonth = Carbon::now()->month;
         $totalDays = Carbon::now()->daysInMonth;
-        $totalFaculties = User::where('role', 'faculty')->count(); // Counting total faculties
+        $totalFaculties = User::where('role', 'faculty')->count();
 
-        // Fetch all attendance records for the current month
         $attendances = Attendance::whereMonth('entered_at', $currentMonth)->get();
 
-        // Grouping attendances by faculty_id and then by the day
         $facultyAttendances = $attendances->groupBy('faculty_id')->map(function ($attendance) {
             return $attendance->groupBy(function ($date) {
                 return Carbon::parse($date->entered_at)->format('Y-m-d');
             })->count();
         });
 
-        $totalAttendance = $facultyAttendances->sum(); // Summing up total attendance
-        $possibleAttendance = $totalFaculties * $totalDays; // Calculating possible attendance
+        $totalAttendance = $facultyAttendances->sum(); 
+        $possibleAttendance = $totalFaculties * $totalDays; 
 
         return $possibleAttendance > 0 ? ($totalAttendance / $possibleAttendance) * 100 : 0;
     }
@@ -70,7 +66,7 @@ class AdminController extends Controller
         $monthlyAttendance = Attendance::select(
             DB::raw("DATE_FORMAT(entered_at, '%Y-%m') as month"),
             DB::raw('COUNT(id) as attendance_count'),
-            DB::raw('COUNT(DISTINCT faculty_id) as total_faculties') // Change user_id to faculty_id
+            DB::raw('COUNT(DISTINCT faculty_id) as total_faculties') 
         )
         ->whereNotNull('entered_at')
         ->whereNotNull('exited_at')
