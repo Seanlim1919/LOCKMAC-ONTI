@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ScheduleManagementController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\UserController;
 
 
@@ -20,13 +21,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-
-
+Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect(auth()->user()->role === 'admin' ? '/admin' : '/faculty');
     })->name('dashboard');

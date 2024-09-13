@@ -17,27 +17,35 @@
     <link href="{{ asset('css/faculty.css') }}" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="left">
-            <img src="{{ asset('images/logo.png') }}" alt="LockMac Logo">
-            <h1>LockMac</h1>
+<header class="header">
+    <div class="left">
+        <img src="{{ asset('images/logo.png') }}" alt="LockMac Logo">
+        <h1>LockMac</h1>
+    </div>
+    <div class="right user-info">
+        <!-- Display the user's image -->
+        @if(Auth::user()->user_image)
+            <img src="{{ Auth::user()->user_image }}" alt="{{ Auth::user()->first_name }}'s Image" class="user-image">
+        @else
+            <img src="{{ asset('images/default-avatar.png') }}" alt="Default Image" class="user-image">
+        @endif
+        <span>{{ Auth::user()->first_name }}</span>
+        <i class="fas fa-chevron-down dropdown-toggle"></i>
+        <div class="dropdown-menu">
+            <a href="#" id="settings-link">Settings</a>
+            <a href="{{ route('logout') }}"
+               onclick="event.preventDefault();
+                         document.getElementById('logout-form').submit();">
+                Logout
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </div>
-        <div class="right user-info">
-            <span>{{ Auth::user()->first_name }} </span>
-            <i class="fas fa-chevron-down dropdown-toggle"></i>
-            <div class="dropdown-menu">
-                <a href="#" id="settings-link">Settings</a>
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault();
-                             document.getElementById('logout-form').submit();">
-                    Logout
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
-        </div>
-    </header>
+    </div>
+</header>
+
+
 
     <aside class="sidebar">
         <a href="{{ route('faculty.dashboard') }}" class="{{ request()->routeIs('faculty.dashboard') ? 'active' : '' }}">

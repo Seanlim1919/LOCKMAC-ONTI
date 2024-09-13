@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
                     'first_name' => 'Marylie',
                     'middle_name' => 'Lorzano',
                     'last_name' => 'Refereza',
-                    'email' => 'marefereza@cspc.edu.ph',
+                    'email' => 'marefereza@my.cspc.edu.ph',
                     'password' => '$2y$10$XAOHRuztBgo9QpxX7WQN0.4HtG3TK5UH/5QETp2458WCyxP0RZziy',
                     'phone_number' => '09915135750',
                     'gender' => 'female',

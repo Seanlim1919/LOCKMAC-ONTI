@@ -143,3 +143,23 @@ body {
     margin-top: 10px;
     margin-left: 10px;
 }
+.google-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #000; /* Google blue */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 16px;
+    width: 95%;
+}
+.google-btn img {
+    width: 20px;
+    height: 20px;
+    margin-left: 25px;
+    margin-right: 15px;
+}
+.google-btn:hover {
+    background: #ffc107;
+}

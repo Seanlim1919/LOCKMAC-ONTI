@@ -19,14 +19,12 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone_number');
+            $table->string('phone_number')->nullable();
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
             $table->enum('role', ['admin', 'faculty'])->default('faculty');
             $table->integer('rfid')->unique()->nullable();
-            $table->rememberToken();
             $table->timestamps();
         });
     }

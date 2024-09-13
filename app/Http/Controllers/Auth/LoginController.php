@@ -56,4 +56,21 @@ class LoginController extends Controller
         return redirect('/login'); // Redirect to login page after logout
     }
     
+    public function googleLogin(Request $request)
+    {
+        $user = User::firstOrCreate(
+            ['email' => $request->email],
+            [
+                'name' => $request->name,
+                'google_id' => $request->google_id,
+                'password' => bcrypt(str_random(16)),
+                'profile_photo_path' => $request->image, // Save Google profile image
+            ]
+        );
+        
+        Auth::login($user);
+        
+        return response()->json(['success' => true]);
+    }
+
 }

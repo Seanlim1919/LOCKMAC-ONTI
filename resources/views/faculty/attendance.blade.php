@@ -91,7 +91,6 @@
             <th>Student Number</th>
             <th>Student Name</th>
             <th>Student Info</th>
-            <th>Course Code</th>
             <th>Course Name</th>
             <th>Entered At</th>
             <th>Exited At</th>
@@ -103,7 +102,6 @@
             <td>{{ $attendance->student->student_number ?? 'N/A' }}</td>
             <td>{{ $attendance->student->first_name }} {{ $attendance->student->last_name }}</td>
             <td>{{ $attendance->student->program ?? 'N/A' }} - {{ $attendance->student->year ?? 'N/A' }} {{ $attendance->student->section ?? 'N/A' }}</td>
-            <td>{{ $attendance->course->code ?? 'N/A' }}</td>
             <td>{{ $attendance->course->name ?? 'N/A' }}</td>
             <td>{{ $attendance->entered_at ? $attendance->entered_at->format('m-d-Y h:i A') : 'N/A' }}</td>
             <td>{{ $attendance->exited_at ? $attendance->exited_at->format('m-d-Y h:i A') : 'N/A' }}</td>

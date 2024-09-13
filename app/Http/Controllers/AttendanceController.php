@@ -88,76 +88,43 @@ class AttendanceController extends Controller
         
         $currentUser = auth()->user();
         $schedules = $currentUser->schedules;
-        
+    
+        // Log for debugging
         Log::info('Authenticated User:', [
             'user_id' => $currentUser->id,
             'user_name' => $currentUser->firstname . ' ' . $currentUser->lastname,
         ]);
         
-        if ($schedules->isNotEmpty()) {
-            foreach ($schedules as $schedule) {
-                Log::info('Current Schedule:', [
-                    'program' => $schedule->program,
-                    'year' => $schedule->year,
-                    'section' => $schedule->section,
-                    'schedule_id' => $schedule->id,
-                    'course_code' => $schedule->course_code, 
-                    'course_name' => $schedule->course_name
-                ]);
-            }
-        } else {
-            Log::info('Current Schedule:', ['message' => 'No schedule found for the user.']);
-        }
-        
         $query = StudentAttendance::with(['student', 'course'])
-            ->where('faculty_id', $currentUser->id);
-        
-        if ($schedules->isNotEmpty()) {
-            $query->whereHas('student', function ($q) use ($schedules) {
-                $q->where(function($query) use ($schedules) {
-                    foreach ($schedules as $schedule) {
-                        $query->orWhere(function($q) use ($schedule) {
-                            $q->where('program', $schedule->program)
-                              ->where('year', $schedule->year)
-                              ->where('section', $schedule->section);
-                        });
-                    }
-                });
+            ->where('faculty_id', $currentUser->id)
+            ->whereHas('schedule', function($q) use ($schedules) {
+                $q->whereIn('id', $schedules->pluck('id'));
             });
-        } else {
-            $query->whereRaw('1 = 0'); // This condition ensures no records are returned
-        }
-        
+    
         if ($date) {
             $query->whereDate('entered_at', $date);
         }
-        
+    
         if ($section) {
             $query->whereHas('student', function ($q) use ($section) {
                 $q->where('section', $section);
             });
         }
-        
+    
         if ($course) {
-            $query->whereHas('course', function ($q) use ($course) {
-                $q->where('id', $course);
+            $query->whereHas('schedule', function ($q) use ($course) {
+                $q->where('course_id', $course);
             });
         }
     
         $studentAttendances = $query->orderBy('entered_at', 'asc')->get();
-        
+    
         $sections = Student::distinct()->pluck('section');
         $courses = Course::all();
         
-        $userSchedules = $schedules->map(function ($schedule) {
-            return [
-                'course_code' => $schedule->course_code,
-                'course_name' => $schedule->course_name,
-            ];
-        });
-        
-        return view('faculty.attendance', compact('studentAttendances', 'date', 'section', 'course', 'sections', 'courses', 'userSchedules'));
+        return view('faculty.attendance', compact('studentAttendances', 'date', 'section', 'course', 'sections', 'courses'));
     }
+    
     
     
     
@@ -252,6 +219,7 @@ class AttendanceController extends Controller
     
     
     
+
     public function export(Request $request)
     {
         $date = $request->input('date');
@@ -259,58 +227,106 @@ class AttendanceController extends Controller
         $program = $request->input('program');
         $year = $request->input('year');
         $section = $request->input('section');
-
-        return Excel::download(new StudentAttendanceExport($date, $course, $program, $year, $section), 'student_attendance.xlsx');
+    
+        $currentUser = auth()->user();
+        $schedules = $currentUser->schedules;
+    
+        $query = StudentAttendance::with(['student', 'course'])
+            ->where('faculty_id', $currentUser->id)
+            ->whereHas('schedule', function($q) use ($schedules) {
+                $q->whereIn('id', $schedules->pluck('id'));
+            });
+    
+        if ($date) {
+            $query->whereDate('entered_at', $date);
+        }
+    
+        if ($section) {
+            $query->whereHas('student', function ($q) use ($section) {
+                $q->where('section', $section);
+            });
+        }
+    
+        if ($course) {
+            $query->whereHas('schedule', function ($q) use ($course) {
+                $q->where('course_id', $course);
+            });
+        }
+    
+        if ($program) {
+            $query->whereHas('student', function ($q) use ($program) {
+                $q->where('program', $program);
+            });
+        }
+    
+        if ($year) {
+            $query->whereHas('student', function ($q) use ($year) {
+                $q->where('year', $year);
+            });
+        }
+    
+        $studentAttendances = $query->get();
+    
+        $pdf = Pdf::loadView('faculty.student_attendance_export', compact('studentAttendances'))
+                  ->setPaper('a4', 'landscape');
+    
+        return $pdf->download('student_attendance.pdf');
     }
+    
 
 
-public function exportLogbookPdf(Request $request)
-{
-    $date = $request->input('date');
-    $section = $request->input('section');
-    $course = $request->input('course');
-    $program = $request->input('program');
-    $year = $request->input('year');
-
-    $currentUser = auth()->user();
-
-    $query = StudentAttendance::with(['student', 'course', 'faculty'])
-        ->where('faculty_id', $currentUser->id); 
-
-    if ($date) {
-        $query->whereDate('entered_at', $date);
+    public function exportLogbookPdf(Request $request)
+    {
+        $date = $request->input('date');
+        $section = $request->input('section');
+        $course = $request->input('course');
+        $program = $request->input('program');
+        $year = $request->input('year');
+    
+        $currentUser = auth()->user();
+        $schedules = $currentUser->schedules;
+    
+        $query = StudentAttendance::with(['student', 'course'])
+            ->where('faculty_id', $currentUser->id)
+            ->whereHas('schedule', function($q) use ($schedules) {
+                $q->whereIn('id', $schedules->pluck('id'));
+            });
+    
+        if ($date) {
+            $query->whereDate('entered_at', $date);
+        }
+    
+        if ($section) {
+            $query->whereHas('student', function ($q) use ($section) {
+                $q->where('section', $section);
+            });
+        }
+    
+        if ($course) {
+            $query->whereHas('schedule', function ($q) use ($course) {
+                $q->where('course_id', $course);
+            });
+        }
+    
+        if ($program) {
+            $query->whereHas('student', function ($q) use ($program) {
+                $q->where('program', $program);
+            });
+        }
+    
+        if ($year) {
+            $query->whereHas('student', function ($q) use ($year) {
+                $q->where('year', $year);
+            });
+        }
+    
+        $studentAttendances = $query->get();
+    
+        $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
+                  ->setPaper('a4', 'landscape');
+    
+        return $pdf->download('student_logbook.pdf');
     }
-
-    if ($section) {
-        $query->whereHas('student', function ($q) use ($section) {
-            $q->where('section', $section);
-        });
-    }
-
-    if ($course) {
-        $query->whereHas('course', function ($q) use ($course) {
-            $q->where('id', $course);
-        });
-    }
-
-    if ($program) {
-        $query->whereHas('student', function ($q) use ($program) {
-            $q->where('program', $program);
-        });
-    }
-
-    if ($year) {
-        $query->whereHas('student', function ($q) use ($year) {
-            $q->where('year', $year);
-        });
-    }
-
-    $studentAttendances = $query->get();
-
-    $pdf = Pdf::loadView('faculty.student_logbook', compact('studentAttendances'))
-              ->setPaper('a4', 'landscape');
-
-    return $pdf->download('student_logbook.pdf');
-}
+    
 
 }

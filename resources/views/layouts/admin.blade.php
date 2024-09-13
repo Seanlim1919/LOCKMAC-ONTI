@@ -26,7 +26,13 @@
             <h1>LockMac</h1>
         </div>
         <div class="right user-info">
-            <span>{{ Auth::user()->first_name }} </span>
+                    <!-- Display the user's image -->
+            @if(Auth::user()->user_image)
+                <img src="{{ Auth::user()->user_image }}" alt="{{ Auth::user()->first_name }}'s Image" class="user-image">
+            @else
+                <img src="{{ asset('images/default-avatar.png') }}" alt="Default Image" class="user-image">
+            @endif
+            <span>{{ Auth::user()->first_name }}</span>
             <i class="fas fa-chevron-down dropdown-toggle"></i>
             <div class="dropdown-menu">
                 <a href="{{ route('logout') }}"
