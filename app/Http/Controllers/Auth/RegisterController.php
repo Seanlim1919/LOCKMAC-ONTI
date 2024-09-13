@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\RFID;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB; // Import DB facade for transactions
+use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Cache;
+use App\Notifications\EmailVerificationNotification;
 
 class RegisterController extends Controller
 {
@@ -42,6 +44,42 @@ class RegisterController extends Controller
     {
         return view('auth.register');
     }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return redirect()->back()->withErrors(['email' => 'User not found.']);
+        }
+
+        $otpValid = $this->verifyOtpCode($request->email, $request->otp); // Implement this method
+
+        if ($otpValid) {
+            $user->markEmailAsVerified(); // Assuming you want to mark the email as verified
+            return redirect($this->redirectPath())->with('status', 'Email verified successfully.');
+        } else {
+            return redirect()->back()->withErrors(['otp' => 'Invalid OTP.']);
+        }
+    }
+
+    public function verifyOtpCode($email, $otp)
+    {
+        $cachedOtp = Cache::get('otp_' . $email);
+    
+        if ($cachedOtp === $otp) {
+            Cache::forget('otp_' . $email); // Remove OTP from cache after successful verification
+            return true;
+        }
+    
+        return false;
+    }
+
 
     /**
      * Handle a registration request for the application.
@@ -95,6 +133,9 @@ class RegisterController extends Controller
     
                 // Commit the transaction
                 DB::commit();
+
+                // Send OTP
+                $user->notify(new EmailVerificationNotification());
     
                 // Log in the user
                 $this->guard()->login($user);
@@ -140,14 +181,14 @@ class RegisterController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'ends_with:@cspc.edu.ph'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'ends_with:@my.cspc.edu.ph'],
             'phone_number' => ['required', 'string', 'max:20'],
             'gender' => ['required', 'string', 'in:male,female'],
             'date_of_birth' => ['required', 'date', 'date_format:Y-m-d'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'rfid' => ['nullable', 'string'],
         ], [
-            'email.ends_with' => 'The email address must end with @cspc.edu.ph',
+            'email.ends_with' => 'The email address must end with @my.cspc.edu.ph',
             'date_of_birth.date_format' => 'The date of birth must be in correct format.',
         ]);
     }
