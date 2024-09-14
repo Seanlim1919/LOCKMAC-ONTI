@@ -11,14 +11,14 @@
                     {{ session('status') }}
                 </div>
             @endif
-            <div class="form-group">
+            <div class="form-login-group">
                 <label for="email">Email Address</label>
                 <input type="email" name="email" class="form-control @error('email') border-red-500 @enderror" placeholder="Enter your email address" required autofocus>
                 @error('email')
                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="form-group">
+            <div class="form-login-group">
                 <label for="password">Password</label>
                 <input type="password" name="password" class="form-control @error('password') border-red-500 @enderror" placeholder="Enter your password" required>
                 @error('password')
