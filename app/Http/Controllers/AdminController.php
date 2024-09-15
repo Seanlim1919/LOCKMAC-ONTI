@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Models\Course;
-use App\Models\Attendance;
 use App\Models\Student;
+use App\Models\StudentAttendance; // Ensure this is correct
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SchedulesExport;
@@ -22,6 +22,7 @@ class AdminController extends Controller
         $studentCount = Student::count(); 
         $courseCount = Course::count(); 
         $attendancePercentage = $this->getAttendancePercentage(); 
+        $studentAttendanceToday = $this->getStudentAttendancePercentageToday();
 
         $faculty_id = $request->input('faculty_id');
         $schedules = Schedule::when($faculty_id, function ($query, $faculty_id) {
@@ -29,12 +30,38 @@ class AdminController extends Controller
         })->with('course', 'faculty')->get();
 
         $monthlyAttendance = $this->getMonthlyAttendanceData();
+        
+        // Assuming you want to pass similar data for faculty attendance, student attendance, and system visitors
+        $facultyAttendanceData = $this->getAttendanceData('faculty');
+        $studentAttendanceData = $this->getAttendanceData('student');
 
         return view('admin.dashboard', compact(
             'schedules', 'faculties', 'facultyCount', 'studentCount', 'courseCount',
-            'attendancePercentage', 'faculty_id', 'monthlyAttendance'
+            'attendancePercentage', 'faculty_id', 'monthlyAttendance', 'studentAttendanceToday',
+            'facultyAttendanceData', 'studentAttendanceData'
         ));
     }
+
+    private function getAttendanceData($type)
+    {
+        // Sample implementation for fetching data without 'type' column
+        // Assuming you want to fetch attendance data grouped by date
+        $data = StudentAttendance::select(
+            DB::raw("DATE_FORMAT(entered_at, '%Y-%m-%d') as date"),
+            DB::raw('COUNT(id) as count')
+        )
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+        return [
+            'labels' => $data->pluck('date')->toArray(),
+            'data' => $data->pluck('count')->toArray()
+        ];
+    }
+
+
+    
 
     public function export()
     {
@@ -47,7 +74,7 @@ class AdminController extends Controller
         $totalDays = Carbon::now()->daysInMonth;
         $totalFaculties = User::where('role', 'faculty')->count();
 
-        $attendances = Attendance::whereMonth('entered_at', $currentMonth)->get();
+        $attendances = StudentAttendance::whereMonth('entered_at', $currentMonth)->get();
 
         $facultyAttendances = $attendances->groupBy('faculty_id')->map(function ($attendance) {
             return $attendance->groupBy(function ($date) {
@@ -61,15 +88,25 @@ class AdminController extends Controller
         return $possibleAttendance > 0 ? ($totalAttendance / $possibleAttendance) * 100 : 0;
     }
 
+    private function getStudentAttendancePercentageToday()
+    {
+        $today = Carbon::today();
+        $totalStudents = Student::count();
+        $attendancesToday = StudentAttendance::whereDate('entered_at', $today->toDateString())
+            ->distinct('student_id')
+            ->count('student_id');
+
+        return $totalStudents > 0 ? ($attendancesToday / $totalStudents) * 100 : 0;
+    }
+
     private function getMonthlyAttendanceData()
     {
-        $monthlyAttendance = Attendance::select(
+        $monthlyAttendance = StudentAttendance::select(
             DB::raw("DATE_FORMAT(entered_at, '%Y-%m') as month"),
             DB::raw('COUNT(id) as attendance_count'),
-            DB::raw('COUNT(DISTINCT faculty_id) as total_faculties') 
+            DB::raw('COUNT(DISTINCT student_id) as total_students')
         )
         ->whereNotNull('entered_at')
-        ->whereNotNull('exited_at')
         ->groupBy('month')
         ->orderBy('month')
         ->get();
@@ -77,7 +114,7 @@ class AdminController extends Controller
         $monthlyData = [];
         foreach ($monthlyAttendance as $data) {
             $totalDays = Carbon::parse($data->month . '-01')->daysInMonth;
-            $possibleAttendance = $data->total_faculties * $totalDays;
+            $possibleAttendance = $data->total_students * $totalDays;
 
             $monthlyData[] = [
                 'month' => $data->month,
@@ -87,4 +124,5 @@ class AdminController extends Controller
 
         return $monthlyData;
     }
+
 }

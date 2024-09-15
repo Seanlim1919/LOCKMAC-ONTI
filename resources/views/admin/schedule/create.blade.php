@@ -20,7 +20,7 @@
             <label for="faculty_id">Faculty</label>
             <select name="faculty_id" id="faculty_id" class="form-control">
                 @foreach ($faculties as $faculty)
-                    <option value="{{ $faculty->id }}">{{ $faculty->first_name }} {{ $faculty->last_name }}</option>
+                    <option value="{{ $faculty->id }}">{{ ucfirst(strtolower($faculty->first_name)) }} {{ ucfirst(strtolower($faculty->last_name)) }}</option>
                 @endforeach
             </select>
         </div>

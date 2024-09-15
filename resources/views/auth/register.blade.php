@@ -12,8 +12,7 @@
 @endif
 
 <div class="register-container">
-    <h2>{{ __('REGISTER') }}</h2>
-    <p>Provide your information to get started</p>
+    <h2>{{ __('Create Account') }}</h2>
     <form method="POST" action="{{ route('register') }}" id="registrationForm">
         @csrf
 

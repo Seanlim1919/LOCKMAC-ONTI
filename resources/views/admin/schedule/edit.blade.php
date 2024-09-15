@@ -23,7 +23,7 @@
             <select name="faculty_id" id="faculty_id" class="form-control">
                 @foreach ($faculties as $faculty)
                     <option value="{{ $faculty->id }}" {{ $schedule->faculty_id == $faculty->id ? 'selected' : '' }}>
-                        {{ $faculty->first_name }} {{ $faculty->last_name }}
+                        {{ ucfirst(strtolower($faculty->first_name)) }} {{ ucfirst(strtolower($faculty->last_name)) }}
                     </option>
                 @endforeach
             </select>
@@ -83,12 +83,14 @@
         </div>
         <div class="form-group">
             <label for="start_time">Start Time</label>
-            <input type="time" name="start_time" id="start_time" class="form-control" value="{{ $schedule->start_time }}" required>
+            <input type="time" name="start_time" id="start_time" class="form-control" value="{{ $schedule->start_time ? $schedule->start_time->format('H:i') : '' }}" required>
         </div>
+
         <div class="form-group">
             <label for="end_time">End Time</label>
-            <input type="time" name="end_time" id="end_time" class="form-control" value="{{ $schedule->end_time }}" required>
+            <input type="time" name="end_time" id="end_time" class="form-control" value="{{ $schedule->end_time ? $schedule->end_time->format('H:i') : '' }}" required>
         </div>
+
         <button type="submit" class="btn btn-primary">Update Schedule</button>
     </form>
 </div>

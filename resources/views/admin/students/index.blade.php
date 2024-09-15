@@ -4,14 +4,16 @@
 <div class="container">
     <h2>STUDENTS</h2>
     <div class="action-bar d-flex justify-content-between align-items-center mb-3">
-        <form method="GET" action="{{ route('admin.students.index') }}" id="search-form" class="d-flex align-items-center">
-            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="search-input" placeholder="Search">
-            <button type="submit" class="btn btn-secondary ml-2">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
+        <div class="search-form-container ml-auto">
+            <form method="GET" action="{{ route('admin.students.index') }}" id="search-form" class="d-flex align-items-center">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="search-input" placeholder="Search">
+                <button type="submit" class="btn btn-secondary ml-2">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
     </div>
-    <table class="table table-bordered">
+    <table class="custom-table table-bordered">
         <thead>
             <tr>
                 <th>Student Number</th>

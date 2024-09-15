@@ -1,0 +1,128 @@
+/* General container styling */
+.container {
+    padding: 20px;
+}
+
+/* Styling for the info boxes */
+.info-box {
+    border: 2px solid  #fc0; /* Updated border color */
+    box-shadow: 0 0 5px rgba(255, 226, 2, 0.818);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header styling for info boxes */
+.info-box-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+/* Title styling */
+.info-box-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Content styling for info boxes */
+.info-box-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Position relative for the icon */
+}
+
+/* Time icon styling */
+.info-box-icon {
+    position: absolute;
+    left: 35px;
+    font-size: 34px;
+    color: #000;
+}
+
+/* Number styling */
+.info-box-number {
+    font-size: 36px; /* Increased font size for the current time */
+    font-weight: bold;
+    margin: 0;
+    margin-left: 40px; /* Space for the icon */
+}
+
+/* Canvas styling for charts */
+#facultyAttendanceChart,
+#studentAttendanceChart {
+    width: 100%;
+    height: 200px; /* Adjust the height as needed */
+}
+
+/* Ensure the table's layout is fixed */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Fixed table layout */
+}
+
+/* Adjust the first column to be longer */
+.table th:first-child,
+.table td:first-child {
+    width: 18%; /* Adjust this width as needed */
+}
+
+.table th:not(:first-child),
+.table td:not(:first-child) {
+    width: calc((100% - 18%) / 7); /* Divide remaining width among the other columns */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ellipsis for overflow text */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Ensure all other columns have equal width */
+.table th,
+.table td {
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ellipsis for overflow text */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Ensure proper table cell behavior */
+.time-slot {
+    position: relative; /* Relative positioning for overlay */
+    padding: 10px; /* Adjust padding as needed */
+    border: 1px solid #ddd; /* Optional border for clarity */
+}
+
+/* Styling for occupied slots */
+.time-slot.occupied {
+    background-color: #09d238; /* Light green background for occupied slots */
+    color: #000; /* Dark text color for contrast */
+    text-align: center; /* Center text horizontally */
+    vertical-align: middle; /* Center text vertically */
+    position: relative; /* Position relative to the parent cell */
+    z-index: 1; /* Ensure it overlays above other content */
+}
+
+/* Optional: Overlay effect */
+.time-slot.occupied::after {
+    content: ""; /* Create the overlay */
+    position: absolute; /* Absolute positioning within the cell */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 210, 56, 0.5); /* Semi-transparent green */
+    z-index: -35; /* Place overlay behind text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .info-box {
+        margin-bottom: 15px;
+    }
+}

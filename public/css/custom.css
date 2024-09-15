@@ -30,7 +30,7 @@ body {
     margin-bottom: 20px;
     font-weight: bold;
     text-align: center;
-    font-size: x-large;
+    font-size: xx-large;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow for text */
 }
 
@@ -131,12 +131,6 @@ body {
 .register-container {
     width: 800px;
     margin-bottom: 50px;
-}
-
-.register-container h2 {
-    margin-bottom: 10px;
-    font-weight: bold;
-    text-align: center;
 }
 
 .register-container p {
@@ -280,13 +274,14 @@ body {
 .google-btn {
     display: inline-flex;
     align-items: center;
-    background: #000; /* Google blue */
+    background: #000;
     color: #fff;
     padding: 10px 20px;
     border-radius: 30px;
     font-weight: bold;
     font-size: 16px;
     width: 100%;
+    margin-left: -5px;
 }
 .google-btn img {
     width: 20px;
@@ -295,5 +290,5 @@ body {
     margin-right: 25px;
 }
 .google-btn:hover {
-    background: #ffc107;
+    background: #6c6c6b;
 }

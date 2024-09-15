@@ -23,3 +23,13 @@ if (!function_exists('getFacultyTitle')) {
         return 'Mr./Ms.'; // Default if gender is not set or recognized
     }
 }
+
+if (!function_exists('formatTime')) {
+    function formatTime($hour)
+    {
+        $period = $hour <= 12 ? 'AM' : 'PM';
+        $formattedHour = $hour % 12;
+        $formattedHour = $formattedHour == 0 ? 12 : $formattedHour;
+        return sprintf('%d:00 %s', $formattedHour, $period);
+    }
+}

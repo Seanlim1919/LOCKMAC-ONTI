@@ -1,177 +1,306 @@
-.centered-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.centered-form .form-group {
-    margin-bottom: 15px;
-}
-
-.centered-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.centered-form .form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-.centered-form .form-check {
+/* Action Bar */
+.action-bar {
     display: flex;
     align-items: center;
-}
-
-.centered-form .form-check-input {
-    margin-right: 10px;
-}
-
-.centered-form .form-check-label {
-    margin-right: 10px;
-    font-weight: normal;
-}
-
-.centered-form .btn-submit {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #fc0;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.centered-form .btn-submit:hover {
-    background-color: #e0a800;
-}
-
-h2 {
     margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    justify-content: flex-end;
 }
 
-/* Styles specifically for the create and edit forms */
-.form-container {
-    max-width: 600px;
-    margin: 60px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+.action-bar .left-actions {
+    flex: 1;
 }
 
-.form-container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #000000;
-    text-align: center;
-    font-weight: 700;
-}
-
-.form-container form {
+.action-bar .right-actions {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    gap: 10px; /* Space between buttons */
 }
 
-.form-container .form-group {
-    margin-bottom: 15px;
-}
-
-.form-container label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: block;
-    color: #495057;
-}
-
-.form-container input[type="text"],
-.form-container input[type="email"],
-.form-container input[type="date"],
-.form-container input[type="password"],
-.form-container input[type="number"],
-.form-container select {
-    width: 95%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.form-container input[type="text"]:focus,
-.form-container input[type="email"]:focus,
-.form-container input[type="date"]:focus,
-.form-container input[type="password"]:focus,
-.form-container input[type="number"]:focus,
-.form-container select:focus {
-    border-color: #e0a800;
-    outline: 0;
-    box-shadow: 0 0 5px rgba(255, 226, 2, 0.818);
-}
-
-.form-container .invalid-feedback {
-    display: block;
-    margin-top: 5px;
-    font-size: 14px;
-    color: #e3342f;
-}
-
-.form-container .form-check {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.form-container .form-check-input {
-    margin-right: 10px;
-}
-
-.form-container .form-check-label {
-    margin: 0;
-}
-
-.form-container button[type="submit"] {
+.action-bar .btn {
     padding: 10px 20px;
-    font-size: 16px;
-    color: #000000;
-    background-color: #ffc107;
+    font-size: 14px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    align-self: center
 }
 
-.form-container button[type="submit"]:hover {
-    background-color: #e0a800;
+.action-bar .btn-secondary {
+    background-color: #666; /* secondary button color */
+    color: white;
+    width: 200px;
 }
 
-/* Responsive Styles for the forms */
-@media (max-width: 600px) {
-    .form-container {
-        padding: 15px;
+.action-bar .btn-secondary:hover {
+    background-color: #555; /* Darker secondary color */
+}
+
+.action-bar .btn-tertiary {
+    background-color: #000; /* Medium Gray */
+    color: white;
+    margin-right: -400px;
+}
+
+.action-bar .btn-tertiary:hover {
+    background-color: #666; /* Darker Gray */
+}
+
+.action-bar .btn-quaternary {
+    background-color: #000; /* Medium Gray */
+    color: white;
+}
+
+.action-bar .btn-quaternary:hover {
+    background-color: #666; /* Darker Gray */
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border: 1px solid #ccc; /* Light Gray Border */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ccc; /* Light Gray */
+}
+
+.table th {
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+}
+
+.table td {
+    color: #333; /* Dark Gray */
+}
+
+.table td a {
+    text-decoration: none;
+    color: #fc0; /* Yellow */
+}
+
+.table td .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.table td .btn:hover {
+    background-color: #e6b800; /* Darker Yellow */
+}
+
+/* Custom Table Styling */
+/* Custom Table Styling */
+.custom-table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border: 1px solid #ccc; /* Light Gray Border */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-table th, .custom-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ccc; /* Light Gray */
+}
+
+.custom-table th {
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+    width: 18%; /* Default width for headers */
+}
+
+.custom-table td {
+    color: #333; /* Dark Gray */
+    width: 18%; /* Default width for data cells */
+}
+
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+    width: 40%; /* Wider width for the second column */
+}
+
+.custom-table td a {
+    text-decoration: none;
+    color: #fc0; /* Yellow */
+}
+
+.custom-table td .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.custom-table td .btn:hover {
+    background-color: #e6b800; /* Darker Yellow */
+}
+
+
+
+/* Form Input */
+#search-input, select.form-control {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc; /* Light Gray Border */
+    background-color: #f8f9fa; /* Very Light Gray */
+    color: #333; /* Dark Gray */
+}
+
+#search-input:focus, select.form-control:focus {
+    outline: none;
+    border-color: #fc0; /* Yellow */
+    box-shadow: 0 0 5px rgba(252, 192, 0, 0.25); /* Yellow Glow */
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-link {
+    padding: 8px 12px;
+    background-color: #f8f9fa; /* Very Light Gray */
+    color: #fc0; /* Yellow */
+    border: 1px solid #ccc; /* Light Gray Border */
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+}
+
+/* Schedule Table Specific */
+.schedule-link {
+    text-decoration: none;
+    color: #333; /* Dark Gray */
+    font-weight: bold;
+}
+
+.schedule-link:hover .highlight {
+    background-color: #fc0; /* Yellow */
+    color: #333; /* Dark Gray */
+}
+
+.time-slot {
+    vertical-align: middle;
+}
+
+.highlight {
+    padding: 8px;
+    background-color: #f8f9fa; /* Very Light Gray */
+    border: 1px solid #ccc; /* Light Gray Border */
+    border-radius: 4px;
+    position: relative;
+}
+
+/* Actions container styling */
+.actions {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+}
+
+/* Delete Button Design */
+.actions .btn-icon {
+    background-color: transparent !important;
+    color: rgb(233, 8, 8) !important;
+    font-size: 17px !important; /* Adjust the icon size */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for the delete button */
+.actions .btn-icon:hover {
+    color: darkred !important;
+}
+
+.btn-icon.delete {
+    color: red !important; /* Set icon color to red */
+}
+
+/* Styling the trash icon for schedule */
+.actions .btn-icon i {
+    pointer-events: none; /* Prevent accidental clicks on the icon itself */
+}
+
+/* Delete Button confirmation style */
+.actions form {
+    display: inline-block;
+}
+
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .action-bar {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .form-container h2 {
-        font-size: 20px;
+    .action-bar .btn {
+        margin-top: 10px;
     }
 
-    .form-container button[type="submit"] {
-        padding: 10px;
-        font-size: 14px;
+    .table, .custom-table {
+        font-size: 14px; /* Adjust font size for tables */
+    }
+}
+
+@media (max-width: 992px) {
+    .action-bar .btn {
+        padding: 8px 16px; /* Smaller buttons on medium screens */
+    }
+
+    .table, .custom-table {
+        font-size: 12px; /* Adjust font size further */
+    }
+}
+
+@media (max-width: 768px) {
+    .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-bar .btn {
+        margin-top: 10px;
+        width: 100%; /* Full width buttons */
+    }
+
+    .table, .custom-table {
+        font-size: 10px; /* Smaller text in tables */
+    }
+
+    .custom-table th, .custom-table td {
+        width: auto; /* Allow auto width for table cells */
+    }
+
+    .custom-table th:nth-child(2),
+    .custom-table td:nth-child(2) {
+        width: auto; /* Adjust width for second column */
+    }
+}
+
+@media (max-width: 576px) {
+    .action-bar .btn {
+        padding: 6px 12px; /* Smaller buttons on small screens */
+    }
+
+    .table, .custom-table {
+        font-size: 8px; /* Very small text for smaller devices */
     }
 }

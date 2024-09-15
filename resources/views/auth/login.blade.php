@@ -25,7 +25,7 @@
                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                 @enderror
             </div>
-            <button type="submit" class="btn btn-primary btn-block">LOG IN</button>
+            <button type="submit" class="btn btn-primary btn-block">LOGIN</button>
         </form>
         <div class="form-group">
             <a href="{{ route('google-auth') }}" class="google-btn">

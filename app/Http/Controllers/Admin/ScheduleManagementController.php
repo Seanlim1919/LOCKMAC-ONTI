@@ -76,15 +76,17 @@ class ScheduleManagementController extends Controller
     
         return redirect()->route('admin.schedule.index')->with('success', 'Schedule created successfully.');
     }
+
     public function edit($id)
     {
         $schedule = Schedule::findOrFail($id); 
         $faculties = User::where('role', 'faculty')->get(); 
         $courses = Course::all();
-    
-        $schedule->start_time = null;
-        $schedule->end_time = null;
-    
+
+        // Convert start_time and end_time to Carbon instances
+        $schedule->start_time = $schedule->start_time ? Carbon::parse($schedule->start_time) : null;
+        $schedule->end_time = $schedule->end_time ? Carbon::parse($schedule->end_time) : null;
+
         return view('admin.schedule.edit', compact('schedule', 'faculties', 'courses'));
     }
     

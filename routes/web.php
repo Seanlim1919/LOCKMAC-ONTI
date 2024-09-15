@@ -24,10 +24,11 @@ Auth::routes();
 Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/logout', [LoginController::class, 'login']);
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect(auth()->user()->role === 'admin' ? '/admin' : '/faculty');
     })->name('dashboard');
