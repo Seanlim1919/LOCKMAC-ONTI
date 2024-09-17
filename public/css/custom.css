@@ -17,6 +17,7 @@ body {
     border: 1px solid #fc0;
     font-family: 'DM Sans', sans-serif;
     width: 450px;
+    overflow-y: auto;
     transform: rotateX(0) rotateY(0); /* Initial transform, you can animate this */
     transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
 }
@@ -89,7 +90,7 @@ body {
     justify-content: center;
 }
 
-.btn {
+.btn, .btn-register {
     padding: 10px 20px;
     color: #000;
     background-color: #ffc107;
@@ -103,26 +104,7 @@ body {
     transition: box-shadow 0.3s, transform 0.3s; /* Smooth transition */
 }
 
-.btn-register {
-    padding: 10px 20px;
-    color: #000;
-    background-color: #ffc107;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 95%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Button shadow for 3D effect */
-    transition: box-shadow 0.3s, transform 0.3s; /* Smooth transition */
-}
-
-.btn:hover {
-    background-color: #e0a800;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
-    transform: translateY(-2px); /* Slight lift on hover */
-}
-
-.btn-register:hover {
+.btn:hover, .btn-register:hover {
     background-color: #e0a800;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
     transform: translateY(-2px); /* Slight lift on hover */
@@ -145,7 +127,7 @@ body {
 }
 
 .register-container .form-group {
-    margin-right: -15px; 
+    margin-right: 7px; 
 }
 
 .form-row .form-group {
@@ -163,23 +145,14 @@ body {
     margin-bottom: 10px;
 }
 
-.gender-group .form-control{
-    width: 95%;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background: linear-gradient(to bottom, #fff, #f8f9fa);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s, border-color 0.3s; /* Smooth transition for focus effect */
-}
-
+.gender-group .form-control,
 .password .form-control {
     width: 100%;
     padding: 8px;
     border: 1px solid #ced4da;
     border-radius: 4px;
     background: linear-gradient(to bottom, #fff, #f8f9fa);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s, border-color 0.3s; /* Smooth transition for focus effect */
 }
 
@@ -227,7 +200,7 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-dialog {
@@ -242,7 +215,7 @@ body {
     padding: 20px;
     border: 1px solid #888;
     border-radius: 5px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Modal content shadow */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Modal content shadow */
 }
 
 .modal-header {
@@ -283,12 +256,14 @@ body {
     width: 100%;
     margin-left: -5px;
 }
+
 .google-btn img {
     width: 20px;
     height: 20px;
-    margin-left: 85px;
-    margin-right: 25px;
+    margin-left: 10px; /* Adjusted to align properly with text */
+    margin-right: 10px; /* Adjusted to align properly with text */
 }
+
 .google-btn:hover {
     background: #6c6c6b;
 }
@@ -306,7 +281,7 @@ body {
 
 .password-wrapper i {
     position: absolute;
-    right: 50px; /* Position of the eye icon */
+    right: 10px; /* Adjusted for proper alignment */
     cursor: pointer;
     color: #aaa; /* Color of the eye icon */
     z-index: 2; /* Make sure it appears above the input */
@@ -316,6 +291,67 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+}
+
+.email-group .form-control {
+    width: 100%; /* Ensure email input takes full width of the container */
+    margin-right: -30px;
+}
+
+.input-group {
+    display: flex;
+    width: 100%; /* Ensure the input group container uses full width */
+}
+
+.input-group .form-control {
+    flex: 1; /* Allow input field to grow and fill the space */
+}
+
+.input-group .btn {
+    border-radius: 0; /* Ensure button and input align correctly */
+    margin-left: 0; /* Align button with input */
+}
+
+
+.input-group input {
+    border-radius: 0.375rem 0 0 0.375rem; /* Rounded corners for the input field */
+}
+
+.input-group .btn {
+    border-radius: 0 0.375rem 0.375rem 0; /* Rounded corners for the button */
+    margin-left: -1px; /* Removes the border overlap */
+}
+
+.email-group .btn {
+    padding: 10px 20px; /* Consistent padding */
+    color: #000; /* White text color for contrast */
+    background-color: #fc0; /* Button background color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-weight: bold; /* Bold text for emphasis */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for a 3D effect */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions for background and shadow */
+    margin-left: 15px; /* Spacing between the input and button */
+    margin-bottom: -2px;
+}
+
+.email-group .btn:hover {
+    background-color: rgb(255, 191, 0); /* Slightly darker shade for hover effect */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+.email-group .btn:disabled {
+    background-color: #c6af00; /* Lighter color when disabled */
+    cursor: not-allowed; /* Change cursor to not-allowed */
+    box-shadow: none; /* Remove shadow when disabled */
+}
+
+
+.form-control-feedback {
+    color: #dc3545; /* Bootstrap danger color for errors */
+    font-size: 0.875rem; /* Slightly smaller font size for the error message */
+    margin-top: 0.5rem;
 }
 
 .password-toggle,

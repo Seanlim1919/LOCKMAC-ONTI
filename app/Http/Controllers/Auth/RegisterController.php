@@ -32,6 +32,11 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
+        // Check if email is already registered
+        if (User::where('email', $request->input('email'))->exists()) {
+            return redirect()->back()->withErrors(['email' => 'Email already registered.'])->withInput();
+        }
+    
         // Validate the form inputs
         $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string', 'max:255'],
@@ -42,11 +47,11 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'rfid' => ['required', 'string', 'size:10'],
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+    
         if ($request->filled('otp')) {
             if (!$this->verifyOtpCode($request->input('email'), $request->input('otp'))) {
                 return redirect()->back()->withErrors(['otp' => 'Invalid OTP.']);
@@ -55,7 +60,7 @@ class RegisterController extends Controller
             $this->sendOtp($request->input('email'));
             return redirect()->back()->with('status', 'OTP sent successfully.');
         }
-
+    
         // Create and log in the user
         $user = User::create([
             'first_name' => $request->input('first_name'),
@@ -65,11 +70,12 @@ class RegisterController extends Controller
             'password' => Hash::make($request->input('password')),
             'rfid' => $request->input('rfid'),
         ]);
-
+    
         Auth::login($user);
-
+    
         return redirect()->route('home')->with('success', 'Registration successful!');
     }
+    
 
     /**
      * Verify OTP code.

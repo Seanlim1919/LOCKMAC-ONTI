@@ -92,13 +92,14 @@
         </div>
 
         <div class="form-row">
-            <div class="form-group">
+            <div class="form-group email-group">
                 <label for="email">{{ __('CSPC Email') }}</label>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your Institutional Email">
+                <div class="input-group">
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" 
+                        name="email" value="{{ old('email') }}" required autocomplete="email" 
+                        placeholder="Enter your Institutional Email">
+                </div>
                 <button type="button" id="verifyEmailButton" class="btn btn-primary">Verify Email</button>
-                <span id="email-check" class="text-success" style="display: none;">
-                    <i class="fa-regular fa-circle-check"></i>
-                </span>
                 @error('email')
                     <div class="form-control-feedback">
                         <strong>{{ $message }}</strong>
@@ -110,9 +111,6 @@
                 <label for="otp">{{ __('Enter OTP') }}</label>
                 <div class="input-container">
                     <input id="otp" type="text" class="form-control" name="otp" placeholder="Enter OTP sent to your email" disabled>
-                    <span id="otp-check" class="text-success" style="display: none;">
-                        <i class="fa-regular fa-circle-check"></i>
-                    </span>
                 </div>
                 <button type="button" id="submitOtpButton" class="btn btn-primary" disabled>Submit OTP</button>
             </div>
@@ -272,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Email Verification
     document.getElementById('verifyEmailButton').addEventListener('click', function() {
         const email = document.getElementById('email').value;
+
         fetch('/verify-email', {
             method: 'POST',
             headers: {
@@ -283,13 +282,17 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById('email-check').style.display = 'inline';
                 document.querySelector('.otp-group').classList.remove('hidden');
                 document.getElementById('otp').disabled = false;
                 document.getElementById('submitOtpButton').disabled = false;
+                document.getElementById('verifyEmailButton').disabled = true;  // Disable the button after successful OTP send
                 alert('OTP has been sent to your email.');
             } else {
-                alert(data.message || 'Email verification failed. Please check the email address.');
+                if (data.message === 'Email is already registered') {
+                    alert('This email is already registered. Please use a different email.');
+                } else {
+                    alert(data.message || 'Email verification failed. Please check the email address.');
+                }
             }
         })
         .catch(error => {
@@ -300,9 +303,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // OTP Verification
     document.getElementById('submitOtpButton').addEventListener('click', function() {
-        const otp = document.getElementById('otp').value.trim(); // Trim spaces
-        const email = document.getElementById('email').value.trim(); // Trim spaces
-        console.log('Submitting OTP:', { email, otp }); // Debug info
+        const otp = document.getElementById('otp').value.trim(); 
+        const email = document.getElementById('email').value.trim(); 
+
         fetch('/verify-otp', {
             method: 'POST',
             headers: {
@@ -315,9 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.valid) {
                 document.querySelector('.otp-group').classList.add('hidden');
-                document.getElementById('otp-check').style.display = 'inline';
-                document.getElementById('email-check').style.color = 'green';
                 document.getElementById('email').disabled = true;
+                document.getElementById('verifyEmailButton').disabled = true;  // Disable button after successful verification
                 alert('OTP verified successfully.');
             } else {
                 alert('Invalid OTP. Please try again.');
