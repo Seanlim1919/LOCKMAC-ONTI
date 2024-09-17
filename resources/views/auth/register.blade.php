@@ -96,7 +96,9 @@
                 <label for="email">{{ __('CSPC Email') }}</label>
                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your Institutional Email">
                 <button type="button" id="verifyEmailButton" class="btn btn-primary">Verify Email</button>
-                <span id="email-check" class="text-success" style="display: none;">✓</span>
+                <span id="email-check" class="text-success" style="display: none;">
+                    <i class="fa-regular fa-circle-check"></i>
+                </span>
                 @error('email')
                     <div class="form-control-feedback">
                         <strong>{{ $message }}</strong>
@@ -104,30 +106,43 @@
                 @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group otp-group hidden">
                 <label for="otp">{{ __('Enter OTP') }}</label>
-                <input id="otp" type="text" class="form-control" name="otp" placeholder="Enter OTP sent to your email" disabled>
+                <div class="input-container">
+                    <input id="otp" type="text" class="form-control" name="otp" placeholder="Enter OTP sent to your email" disabled>
+                    <span id="otp-check" class="text-success" style="display: none;">
+                        <i class="fa-regular fa-circle-check"></i>
+                    </span>
+                </div>
                 <button type="button" id="submitOtpButton" class="btn btn-primary" disabled>Submit OTP</button>
             </div>
         </div>
 
+
+        <!-- Password Fields -->
         <div class="form-row">
-            <div class="form-group">
+            <div class="form-group password-group">
                 <label for="password">{{ __('Password') }}</label>
-                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-                <button type="button" id="togglePassword">👁️</button>
+                <div class="input-container">
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                    <button type="button" id="togglePassword" class="password-toggle"><i class="fa fa-eye"></i></button>
+                </div>
                 @error('password')
                     <div class="form-control-feedback">
                         <strong>{{ $message }}</strong>
                     </div>
                 @enderror
             </div>
+
+            <div class="form-group password-group">
+                <label for="password-confirm">{{ __('Confirm Password') }}</label>
+                <div class="input-container">
+                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                    <button type="button" id="toggleConfirmPassword" class="password-toggle"><i class="fa fa-eye"></i></button>
+                </div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="password-confirm">{{ __('Confirm Password') }}</label>
-            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-        </div>
 
         <div class="form-row">
             <div class="form-group">
@@ -225,12 +240,36 @@ document.addEventListener('DOMContentLoaded', function() {
         socket.emit('stop_scan');
     });
 
+    // Toggle Password Visibility
     document.getElementById('togglePassword').addEventListener('click', function() {
         const passwordField = document.getElementById('password');
-        const type = passwordField.type === 'password' ? 'text' : 'password';
-        passwordField.type = type;
+        const icon = this.querySelector('i');
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     });
 
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const passwordConfirmField = document.getElementById('password-confirm');
+        const icon = this.querySelector('i');
+        if (passwordConfirmField.type === 'password') {
+            passwordConfirmField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordConfirmField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    // Email Verification
     document.getElementById('verifyEmailButton').addEventListener('click', function() {
         const email = document.getElementById('email').value;
         fetch('/verify-email', {
@@ -245,8 +284,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 document.getElementById('email-check').style.display = 'inline';
+                document.querySelector('.otp-group').classList.remove('hidden');
                 document.getElementById('otp').disabled = false;
                 document.getElementById('submitOtpButton').disabled = false;
+                alert('OTP has been sent to your email.');
             } else {
                 alert(data.message || 'Email verification failed. Please check the email address.');
             }
@@ -257,29 +298,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-
+    // OTP Verification
     document.getElementById('submitOtpButton').addEventListener('click', function() {
-        const otp = document.getElementById('otp').value;
-        const email = document.getElementById('email').value;
-        fetch(`/verify-otp`, {
+        const otp = document.getElementById('otp').value.trim(); // Trim spaces
+        const email = document.getElementById('email').value.trim(); // Trim spaces
+        console.log('Submitting OTP:', { email, otp }); // Debug info
+        fetch('/verify-otp', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ email: document.getElementById('email').value, otp: document.getElementById('otp').value })
+            body: JSON.stringify({ email: email, otp: otp })
         })
-
         .then(response => response.json())
         .then(data => {
             if (data.valid) {
-                document.getElementById('otp').style.display = 'none';
-                document.getElementById('submitOtpButton').style.display = 'none';
-                document.getElementById('email-check').style.color = 'green'; // Optional
+                document.querySelector('.otp-group').classList.add('hidden');
+                document.getElementById('otp-check').style.display = 'inline';
+                document.getElementById('email-check').style.color = 'green';
                 document.getElementById('email').disabled = true;
+                alert('OTP verified successfully.');
             } else {
                 alert('Invalid OTP. Please try again.');
             }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('An error occurred. Please try again.');
         });
     });
 });

@@ -292,3 +292,55 @@ body {
 .google-btn:hover {
     background: #6c6c6b;
 }
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Space for the eye icon */
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 50px; /* Position of the eye icon */
+    cursor: pointer;
+    color: #aaa; /* Color of the eye icon */
+    z-index: 2; /* Make sure it appears above the input */
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle,
+.check-icon {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.check-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: green;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+}
+
+.hidden {
+    display: none;
+}
