@@ -2,39 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\RFID;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Cache;
-use App\Notifications\EmailVerificationNotification;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 
 class RegisterController extends Controller
 {
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/login';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
-
     /**
      * Show the registration form.
      *
@@ -45,176 +24,113 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-    public function verifyOtp(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return redirect()->back()->withErrors(['email' => 'User not found.']);
-        }
-
-        $otpValid = $this->verifyOtpCode($request->email, $request->otp); // Implement this method
-
-        if ($otpValid) {
-            $user->markEmailAsVerified(); // Assuming you want to mark the email as verified
-            return redirect($this->redirectPath())->with('status', 'Email verified successfully.');
-        } else {
-            return redirect()->back()->withErrors(['otp' => 'Invalid OTP.']);
-        }
-    }
-
-    public function verifyOtpCode($email, $otp)
-    {
-        $cachedOtp = Cache::get('otp_' . $email);
-    
-        if ($cachedOtp === $otp) {
-            Cache::forget('otp_' . $email); // Remove OTP from cache after successful verification
-            return true;
-        }
-    
-        return false;
-    }
-
-
     /**
      * Handle a registration request for the application.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function register(Request $request)
     {
-        $this->validator($request->all())->validate();
-    
-        $rfidCode = $request->input('rfid');
-        Log::info('Received RFID code:', ['rfid_code' => $rfidCode]);
-    
-        // Normalize the RFID code for consistent comparison
-        $normalizedRfidCode = str_replace(' ', '', $rfidCode);
-        Log::info('Normalized RFID code:', ['rfid_code' => $normalizedRfidCode]);
-    
-        // Check if the RFID code already exists in the database
-        $existingRfid = RFID::where(DB::raw('REPLACE(rfid_code, " ", "")'), $normalizedRfidCode)
-                            ->orWhere('rfid_code', $rfidCode)
-                            ->first();
-    
-        if ($existingRfid) {
-            Log::info('RFID code already exists in the database.', ['rfid_id' => $existingRfid->id]);
-    
-            // Check if the RFID is already assigned to a user
-            $existingUser = User::where('rfid_id', $existingRfid->id)->first();
-            if ($existingUser) {
-                Log::error('RFID code is already assigned to another user.');
-                return redirect()->back()->withInput()->withErrors(['rfid' => 'This RFID code is already registered to another user']);
-            }
-        } else {
-            Log::info('RFID code does not exist. Proceeding to create a new RFID record.');
-    
-            // Start a database transaction
-            DB::beginTransaction();
-    
-            try {
-                // Create the RFID record
-                $rfid = RFID::create([
-                    'rfid_code' => $rfidCode,
-                ]);
-    
-                Log::info('RFID created.', ['rfid_id' => $rfid->id]);
-    
-                // Create the new user
-                $user = $this->create($request->all() + ['rfid_id' => $rfid->id]);
-    
-                Log::info('User created', ['user_id' => $user->id, 'rfid_id' => $user->rfid_id]);
-    
-                // Commit the transaction
-                DB::commit();
-
-                // Send OTP
-                $user->notify(new EmailVerificationNotification());
-    
-                // Log in the user
-                $this->guard()->login($user);
-    
-                // Redirect to the login page
-                return redirect($this->redirectPath());
-            } catch (\Exception $e) {
-                // Rollback the transaction if something goes wrong
-                DB::rollBack();
-                Log::error('Registration failed', ['error' => $e->getMessage()]);
-                return redirect()->back()->withInput()->withErrors(['rfid' => 'An error occurred during registration. Please try again.']);
-            }
-        }
-    
-        // Redirect back to the registration form with error if RFID already exists
-        return redirect()->back()->withInput()->withErrors(['rfid' => 'RFID code already exists or is invalid.']);
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param array $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
+        // Validate the form inputs
+        $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'ends_with:@my.cspc.edu.ph'],
-            'phone_number' => ['required', 'string', 'max:20'],
-            'gender' => ['required', 'string', 'in:male,female'],
-            'date_of_birth' => ['required', 'date', 'date_format:Y-m-d'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'otp' => ['nullable', 'string', 'size:6'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'rfid' => ['nullable', 'string'],
-        ], [
-            'email.ends_with' => 'The email address must end with @my.cspc.edu.ph',
-            'date_of_birth.date_format' => 'The date of birth must be in correct format.',
+            'rfid' => ['required', 'string', 'size:10'],
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Handle OTP verification or sending
+        if ($request->filled('otp')) {
+            if (!$this->verifyOtpCode($request->input('email'), $request->input('otp'))) {
+                return redirect()->back()->withErrors(['otp' => 'Invalid OTP.']);
+            }
+        } else {
+            // Send OTP and notify user
+            $this->sendOtp($request->input('email'));
+            return redirect()->back()->with('status', 'OTP sent successfully.');
+        }
+
+        // Create and log in the user
+        $user = User::create([
+            'first_name' => $request->input('first_name'),
+            'middle_name' => $request->input('middle_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'rfid' => $request->input('rfid'),
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('home')->with('success', 'Registration successful!');
     }
-    
 
     /**
-     * Create a new user instance after a valid registration.
+     * Verify OTP code.
      *
-     * @param array $data
-     * @return \App\Models\User
+     * @param string $email
+     * @param string $otp
+     * @return bool
      */
-    protected function create(array $data)
+    protected function verifyOtpCode($email, $otp)
     {
-        Log::info('Creating user with data:', $data);
-    
-        return User::create([
-            'first_name' => $data['first_name'],
-            'middle_name' => $data['middle_name'],
-            'last_name' => $data['last_name'],
-            'email' => $data['email'],
-            'phone_number' => $data['phone_number'],
-            'gender' => $data['gender'],
-            'date_of_birth' => $data['date_of_birth'],
-            'password' => Hash::make($data['password']),
-            'rfid_id' => $data['rfid_id'] ?? null, 
-            'role' => 'faculty',
-        ]);
+        $cachedOtp = Cache::get('otp_' . $email);
+
+        if ($cachedOtp === $otp) {
+            Cache::forget('otp_' . $email); // Remove OTP from cache after successful verification
+            return true;
+        }
+
+        return false;
     }
+
+    /**
+     * Send OTP to the user email.
+     *
+     * @param string $email
+     * @return void
+     */
+    protected function sendOtp($email)
+    {
+        $otp = rand(100000, 999999); // Generate a 6-digit OTP
+        Cache::put('otp_' . $email, $otp, now()->addMinutes(10)); // Store OTP in cache for 10 minutes
+
+        // Send OTP to email
+        Mail::to($email)->send(new OtpMail($otp));
+    }
+
+    public function verifyEmail(Request $request)
+{
+    $email = $request->input('email');
+
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return response()->json(['success' => false, 'message' => 'Invalid email format'], 400);
+    }
+
+    // Check if email is already in use
+    if (User::where('email', $email)->exists()) {
+        return response()->json(['success' => false, 'message' => 'Email is already registered'], 400);
+    }
+
+    // Send OTP if email is valid and not in use
+    try {
+        $this->sendOtp($email);
+        return response()->json(['success' => true, 'message' => 'OTP sent successfully']);
+    } catch (\Exception $e) {
+        // Log the error and return a generic error message
+        \Log::error('OTP sending failed: '.$e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to send OTP'], 500);
+    }
+}
+
+
 }

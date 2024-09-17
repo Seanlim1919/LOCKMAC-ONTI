@@ -32,7 +32,7 @@
             @else
                 <img src="{{ asset('images/default-avatar.png') }}" alt="Default Image" class="user-image">
             @endif
-            <span>{{ Auth::user()->first_name }}</span>
+            <span>{{ strtoupper(Auth::user()->first_name) }}</span>
             <i class="fas dropdown-toggle"></i>
             <div class="dropdown-menu">
                 <a href="{{ route('logout') }}"

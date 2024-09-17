@@ -63,12 +63,3 @@
     </table>
 </div>
 @endsection
-
-@php
-function formatTime($hour) {
-    $period = $hour < 12 ? 'AM' : 'PM';
-    $formattedHour = $hour % 12;
-    $formattedHour = $formattedHour == 0 ? 12 : $formattedHour;
-    return sprintf('%d:00 %s', $formattedHour, $period);
-}
-@endphp

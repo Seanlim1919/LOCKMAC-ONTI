@@ -11,6 +11,12 @@
     </div>
 @endif
 
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+
 <div class="register-container">
     <h2>{{ __('Create Account') }}</h2>
     <form method="POST" action="{{ route('register') }}" id="registrationForm">
@@ -50,31 +56,9 @@
             </div>
 
             <div class="form-group">
-                <label for="email">{{ __('CSPC Email') }}</label>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your Institutional Email">
-                @error('email')
-                    <div class="form-control-feedback">
-                        <strong>{{ $message }}</strong>
-                    </div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
                 <label for="phone_number">{{ __('Phone Number') }}</label>
                 <input id="phone_number" type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}" required autocomplete="phone_number" placeholder="09*********">
                 @error('phone_number')
-                    <div class="form-control-feedback">
-                        <strong>{{ $message }}</strong>
-                    </div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="dob">{{ __('Date of Birth') }}</label>
-                <input id="dob" type="date" class="form-control @error('date_of_birth') is-invalid @enderror" name="date_of_birth" value="{{ old('date_of_birth') }}" required autocomplete="dob">
-                @error('date_of_birth')
                     <div class="form-control-feedback">
                         <strong>{{ $message }}</strong>
                     </div>
@@ -96,12 +80,42 @@
                     </div>
                 @enderror
             </div>
+            <div class="form-group">
+                <label for="dob">{{ __('Date of Birth') }}</label>
+                <input id="dob" type="date" class="form-control @error('date_of_birth') is-invalid @enderror" name="date_of_birth" value="{{ old('date_of_birth') }}" required autocomplete="dob">
+                @error('date_of_birth')
+                    <div class="form-control-feedback">
+                        <strong>{{ $message }}</strong>
+                    </div>
+                @enderror
+            </div>
+        </div>
 
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">{{ __('CSPC Email') }}</label>
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your Institutional Email">
+                <button type="button" id="verifyEmailButton" class="btn btn-primary">Verify Email</button>
+                <span id="email-check" class="text-success" style="display: none;">✓</span>
+                @error('email')
+                    <div class="form-control-feedback">
+                        <strong>{{ $message }}</strong>
+                    </div>
+                @enderror
+            </div>
 
+            <div class="form-group">
+                <label for="otp">{{ __('Enter OTP') }}</label>
+                <input id="otp" type="text" class="form-control" name="otp" placeholder="Enter OTP sent to your email" disabled>
+                <button type="button" id="submitOtpButton" class="btn btn-primary" disabled>Submit OTP</button>
+            </div>
+        </div>
 
+        <div class="form-row">
             <div class="form-group">
                 <label for="password">{{ __('Password') }}</label>
                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                <button type="button" id="togglePassword">👁️</button>
                 @error('password')
                     <div class="form-control-feedback">
                         <strong>{{ $message }}</strong>
@@ -115,15 +129,22 @@
             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
         </div>
 
-        <div class="form-group">
-            <button type="button" class="btn-register btn-primary" id="scanRfidButton">
-                {{ __('Scan RFID Card') }}
-            </button>
-            @error('rfid')
-                <div class="form-control-feedback">
-                    <strong>{{ $message }}</strong>
-                </div>
-            @enderror
+        <div class="form-row">
+            <div class="form-group">
+                <label for="rfid">{{ __('RFID ID') }}</label>
+                <input id="rfid" type="text" class="form-control @error('rfid') is-invalid @enderror" name="rfid" value="{{ old('rfid') }}" placeholder="Enter your RFID ID or scan below">
+                @error('rfid')
+                    <div class="form-control-feedback">
+                        <strong>{{ $message }}</strong>
+                    </div>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn-register btn-primary" id="scanRfidButton">
+                    {{ __('Scan RFID Card') }}
+                </button>
+            </div>
         </div>
 
         <div id="rfidDisplay" style="display: none;">
@@ -131,12 +152,10 @@
         </div>
 
         <div class="form-group">
-            <button type="submit" id="registerButton" class="btn btn-success" style="display: none;">
+            <button type="submit" id="registerButton" class="btn btn-success">
                 {{ __('Register') }}
             </button>
         </div>
-
-        <input type="hidden" name="rfid" id="rfid" value="{{ old('rfid') }}">
     </form>
 </div>
 
@@ -159,53 +178,110 @@
 </div>
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
-let socket = io('http://172.30.109.177:5000');
+document.addEventListener('DOMContentLoaded', function() {
+    let socket = io('http://127.0.0.1:8000');
 
-socket.on('connect', function() {   
-    console.log('Connected to server');
-});
+    socket.on('connect', function() {
+        console.log('Connected to server');
+    });
 
-socket.on('rfid_status', function(data) {
-    console.log('RFID Status:', data);
-    $('#scanInstructions').text(data.message);
-});
+    socket.on('rfid_status', function(data) {
+        console.log('RFID Status:', data);
+        document.getElementById('scanInstructions').textContent = data.message;
+    });
 
-socket.on('rfid_scanned', function(data) {
-    console.log('RFID Scanned:', data);
-    $('#scanInstructions').hide();
-    $('#rfidValue').text(data.rfid);
-    $('#rfidDisplay').show();
-    $('#registerButton').show();
-});
+    socket.on('rfid_scanned', function(data) {
+        console.log('RFID Scanned:', data);
+        document.getElementById('scanInstructions').style.display = 'none';
+        document.getElementById('rfidValue').textContent = data.rfid;
+        document.getElementById('rfidDisplay').style.display = 'block';
+        document.getElementById('rfid').value = data.rfid;
+        document.getElementById('rfidModal').style.display = 'none';
+    });
 
-$('#scanRfidButton').click(function() {
-    $('#rfidModal').show();
-    $('#scanInstructions').show().text('Please scan your RFID card...');
-    $('#rfidDisplay').hide();
-    $('#registerButton').hide();
-    socket.emit('start_scan');
-});
+    document.getElementById('scanRfidButton').addEventListener('click', function() {
+        document.getElementById('rfidModal').style.display = 'block';
+        document.getElementById('scanInstructions').style.display = 'block';
+        document.getElementById('rfidDisplay').style.display = 'none';
+        socket.emit('start_scan');
+    });
 
-$('#confirmRfid').click(function() {
-    const rfid = $('#rfidValue').text(); 
-    $('#rfid').val(rfid);
-    $('#rfidModal').hide();
-    socket.emit('stop_scan');
-    $('#registrationForm').submit();
-});
+    document.getElementById('confirmRfid').addEventListener('click', function() {
+        const rfid = document.getElementById('rfidValue').textContent;
+        document.getElementById('rfid').value = rfid;
+        document.getElementById('rfidModal').style.display = 'none';
+        socket.emit('stop_scan');
+    });
 
-$('#rescanRfid').click(function() {
-    $('#scanInstructions').show().text('Please scan your RFID card...');
-    $('#rfidDisplay').hide();
-    $('#registerButton').hide();
-    socket.emit('start_scan');
-});
+    document.getElementById('rescanRfid').addEventListener('click', function() {
+        document.getElementById('scanInstructions').style.display = 'block';
+        document.getElementById('rfidDisplay').style.display = 'none';
+        socket.emit('start_scan');
+    });
 
-$('#closeModalButton').click(function() {
-    $('#rfidModal').hide();
-    socket.emit('stop_scan');
+    document.getElementById('closeModalButton').addEventListener('click', function() {
+        document.getElementById('rfidModal').style.display = 'none';
+        socket.emit('stop_scan');
+    });
+
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+    });
+
+    document.getElementById('verifyEmailButton').addEventListener('click', function() {
+        const email = document.getElementById('email').value;
+        fetch('/verify-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('email-check').style.display = 'inline';
+                document.getElementById('otp').disabled = false;
+                document.getElementById('submitOtpButton').disabled = false;
+            } else {
+                alert(data.message || 'Email verification failed. Please check the email address.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+
+
+    document.getElementById('submitOtpButton').addEventListener('click', function() {
+        const otp = document.getElementById('otp').value;
+        const email = document.getElementById('email').value;
+        fetch(`/verify-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ email: document.getElementById('email').value, otp: document.getElementById('otp').value })
+        })
+
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                document.getElementById('otp').style.display = 'none';
+                document.getElementById('submitOtpButton').style.display = 'none';
+                document.getElementById('email-check').style.color = 'green'; // Optional
+                document.getElementById('email').disabled = true;
+            } else {
+                alert('Invalid OTP. Please try again.');
+            }
+        });
+    });
 });
 </script>
 @endsection

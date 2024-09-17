@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\FacultyManagementController;
 use App\Http\Controllers\Admin\StudentManagementController;
 use App\Http\Controllers\Admin\ScheduleManagementController;
@@ -23,10 +24,14 @@ Auth::routes();
 
 Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle']);
+Route::post('/verify-email', [RegisterController::class, 'verifyEmail']);
+Route::post('/verify-otp', [RegisterController::class, 'verifyOtp']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/logout', [LoginController::class, 'login']);
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -92,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
 
         // Route for student attendance in the faculty panel
         Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     });
     

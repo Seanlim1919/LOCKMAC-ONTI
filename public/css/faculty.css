@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'DM Sans', sans-serif;
 }
 
 .header {
@@ -54,13 +54,6 @@ body {
     font-size: 16px;
     color: #000;
     white-space: nowrap; /* Prevent wrapping */
-}
-
-.header .user-info i {
-    font-size: 16px;
-    color: #000;
-    cursor: pointer;
-    margin-left: 10px;
 }
 
 .header .user-info .dropdown-menu {
@@ -181,6 +174,7 @@ h2 {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .table thead {
@@ -204,20 +198,7 @@ h2 {
 }
 
 .table tbody td .btn-icon {
-    display: inline-block;
-    margin-right: 5px;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.table tbody td .btn-icon.edit i {
-    color: blue;
-}
-
-.table tbody td .btn-icon.delete i {
-    color: red;
+    display: none; /* Removed icons */
 }
 
 .pagination {
@@ -264,17 +245,6 @@ h2 {
     cursor: not-allowed;
 }
 
-.table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-
-.table thead th {
-    text-align: center;
-}
-
 .table thead th:first-child {
     width: 15%;
 }
@@ -308,47 +278,6 @@ h2 {
 
 .time-slot {
     padding: 0;
-}
-
-.btn-secondary {
-    background-color: #000; 
-    border-color: #000;    
-    color: white;           
-    padding: 5px 10px;      
-    font-size: 14px;        
-    margin-left: 20px;     
-    display: inline-block;  
-}
-
-.btn-secondary:hover {
-    background-color: #333; 
-    border-color: #333;     
-    text-decoration: none;  
-    color: white;         
-}
-
-.btn-primary:hover {
-    background-color: #333; 
-    border-color: #333;     
-    text-decoration: none;  
-    color: white;         
-}
-
-.btn-primary2 {
-    background-color: #000000;
-    border-color: #000000;
-    color: white;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 4px;
-    text-decoration: none;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-.btn-primary2:hover {
-    background-color: #333333;
-    border-color: #333333;
-    color: #ffffff;
 }
 
 /* Dropdown Styles */

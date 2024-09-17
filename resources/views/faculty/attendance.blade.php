@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container">
-    <h1>Student Attendance</h1>
+    <h1>STUDENT ATTENDANCE</h1>
 
-    <div class="action-bar d-flex justify-content-end align-items-center position-relative">
+    <div class="btn-container">
         <form method="GET" action="{{ route('attendance.students') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ $search ?? '' }}" class="form-control" id="search-input" placeholder="Search">
             <button type="button" class="btn btn-secondary ml-1" id="filter-button">
@@ -16,7 +16,7 @@
             <input type="hidden" name="date" value="{{ request('date') }}">
             <input type="hidden" name="section" value="{{ request('section') }}">
             <input type="hidden" name="course" value="{{ request('course') }}">
-            <button type="submit" class="btn btn-success">Export Attendance</button>
+            <button type="button" class="btn btn-primary">Export Attendance</button>
         </form>
         <form method="POST" action="{{ route('attendance.students.exportPdf') }}">
             @csrf
@@ -25,7 +25,7 @@
             <input type="hidden" name="course" value="{{ request('course') }}">
             <input type="hidden" name="program" value="{{ request('program') }}">
             <input type="hidden" name="year" value="{{ request('year') }}">
-            <button type="submit" class="btn btn-success">Export Logbook</button>
+            <button type="button" class="btn btn-secondary">Export Logbook</button>
         </form>
     </div>
 

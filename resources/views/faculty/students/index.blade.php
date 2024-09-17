@@ -20,17 +20,17 @@
     </div>
     @endif
 
-    <div class="action-bar d-flex justify-content-end align-items-center position-relative">
+    <div class="btn-container">
         <form method="GET" action="{{ route('students.index') }}" id="search-form" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ $search ?? '' }}" class="form-control" id="search-input" placeholder="Search">
             <button type="button" class="btn btn-secondary ml-1" id="filter-button">
                 <i class="fas fa-filter"></i>
             </button>
         </form>
-        <button type="button" class="btn btn-success" onclick="window.location.href='{{ route('students.create') }}'">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('students.create') }}'">
              Add New Student
         </button>
-        <button type="button" class="btn btn-success" id="import-button">
+        <button type="button" class="btn btn-secondary" id="import-button">
              Import Student List
         </button>
     </div>
