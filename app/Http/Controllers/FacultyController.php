@@ -11,8 +11,13 @@ class FacultyController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $schedules = Schedule::where('faculty_id', $user->id)->with('course', 'faculty')->get();
-
+        
+        $schedules = Schedule::where('faculty_id', $user->id)
+                             ->where('status', 1) 
+                             ->with('course', 'faculty')
+                             ->get();
+    
         return view('faculty.dashboard', compact('schedules'));
     }
+    
 }

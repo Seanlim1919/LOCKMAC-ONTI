@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('rfid_id')->nullable()->constrained('rfids')->onDelete('set null');
+            $table->foreignId('rfid_id')->nullable()->constrained('rfids')->onDelete('cascade')->unique();
             $table->dropColumn('rfid'); 
         });
     }

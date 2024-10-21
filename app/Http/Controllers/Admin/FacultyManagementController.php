@@ -6,13 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\RFID;
+use App\Models\Student;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FacultyManagementController extends Controller
 {
+    use SoftDeletes;
+
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $query = User::where('role', 'faculty');
+        $query = User::where('role', 'faculty')
+        ->where('status', '!=', 'Deleted')
+        ->withTrashed(); 
+
+
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -62,9 +71,14 @@ class FacultyManagementController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $faculty = User::findOrFail($id);
-        return view('admin.faculty.edit', compact('faculty'));
+        $faculty = User::with('rfid')->findOrFail($id);
+        $rfid = Rfid::find($faculty->rfid_id);
+        $clientIp = $request->getClientIp();
+
+        return view('admin.faculty.edit', compact('faculty','rfid'),['clientIp' => $clientIp]);
     }
+    
+    
 
     public function update(Request $request, $id)
     {
@@ -91,11 +105,34 @@ class FacultyManagementController extends Controller
         return redirect()->route('admin.faculty.index')->with('success', 'Faculty updated successfully.');
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $faculty = User::findOrFail($id);
+        $faculty->status = $request->input('status');
+        $faculty->save();
+
+        return redirect()->back()->with('success', 'Faculty status updated successfully.');
+    }
+
+
     public function destroy($id)
     {
         $faculty = User::findOrFail($id);
-        $faculty->delete();
-
-        return redirect()->route('admin.faculty.index')->with('success', 'Faculty deleted successfully.');
+        
+        // Check if the faculty has any active schedules
+        if ($faculty->schedules()->where('status', 'active')->exists()) {
+            return redirect()->route('admin.faculty.index')->with('error', "{$faculty->first_name} {$faculty->last_name} has an existing schedule; deletion of account is not allowed.");
+        }
+        
+        // Disable the faculty instead of deleting
+        $faculty->status = 'Deleted';
+        $faculty->save();
+        
+        return redirect()->route('admin.faculty.index')->with('success', 'Faculty disabled successfully.');
     }
+    
+    
+    
+    
+    
 }

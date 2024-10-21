@@ -13,11 +13,19 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function show()
+    public function show(Request $request)
     {
-        return view('faculty.profile.show');
-    }
+        $clientIp = $request->getClientIp();
 
+        if (Auth::user()->role === 'admin') {
+            return view(('admin.profile.show') , ['clientIp' => $clientIp]);
+        } else {
+            return view('faculty.profile.show');
+        }
+
+
+    }
+    
     /**
      * Show the form for editing the user's profile.
      *
@@ -25,8 +33,13 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        return view('faculty.profile.edit');
+        if (Auth::user()->role === 'admin') {
+            return view('admin.profile.edit');
+        } else {
+            return view('faculty.profile.edit');
+        }
     }
+    
 
     /**
      * Update the user's profile information.
@@ -37,45 +50,58 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-
-        // Validate the incoming request data
+    
         $request->validate([
             'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone_number' => 'required|string|max:15',
+            'phone_number' => 'required|numeric|min:11',
+            'gender' => 'required|string|in:male,female,other', 
+            'date_of_birth' => 'required|date',
             'password' => 'nullable|string|confirmed|min:8',
         ]);
-
-        // Handle image upload
-        if ($request->hasFile('user_image')) {
-            // Delete old image if exists
-            if ($user->user_image && Storage::exists(parse_url($user->user_image, PHP_URL_PATH))) {
-                Storage::delete(parse_url($user->user_image, PHP_URL_PATH));
-            }
-
-            // Store new image
-            $path = $request->file('user_image')->store('public/user_images');
-            $user->user_image = Storage::url($path);
-        }
-
-        // Update user information
+    
+        // Update user fields
         $user->first_name = $request->input('first_name');
         $user->middle_name = $request->input('middle_name');
         $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
         $user->phone_number = $request->input('phone_number');
-
-        // Update password if provided
+        $user->gender = $request->input('gender');
+        $user->date_of_birth = $request->input('date_of_birth');
+    
+        if ($user->role === 'admin') {
+            $request->validate([
+                'rfid_code' => 'nullable|string|max:255'
+            ]);
+    
+            // Update RFID code in the rfids table using the user's rfid_id
+            if ($request->filled('rfid_code') && $user->rfid_id) {
+                $rfid = \App\Models\Rfid::find($user->rfid_id);
+                if ($rfid) {
+                    $rfid->rfid_code = $request->input('rfid_code');
+                    $rfid->save();
+                }
+            }
+        }
+    
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
         }
-
-        // Save user data
+    
         $user->save();
-
-        return redirect()->route('profile.show')->with('success', 'Profile updated successfully');
+    
+        if ($user->role === 'admin') {
+            return redirect()->route('profiles.show', ['role' => 'admin'])->with('success', 'Admin profile updated successfully');
+        } else {
+            return redirect()->route('profiles.show', ['role' => 'faculty'])->with('success', 'Faculty profile updated successfully');
+        }
     }
+    
+    
+    
+    
+    
 }

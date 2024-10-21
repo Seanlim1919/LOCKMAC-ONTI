@@ -15,10 +15,14 @@ class CreateStudentAttendanceTable extends Migration
     {
         Schema::create('student_attendances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('student_id')->nullable();
+            $table->unsignedBigInteger('course_id')->nullable();
             $table->timestamp('entered_at')->nullable();
             $table->timestamp('exited_at')->nullable();
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->enum('status', ['Present', 'Absent', 'No Timeout']);
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('no action');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('no action');
+
             $table->timestamps();
         });
     }

@@ -8,12 +8,11 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .btn-gradient {
-            background: linear-gradient(90deg, #000000 80%, #ffc107 20%);
+            background: linear-gradient(90deg, #000000 80%, #ffc107 15%);
             color:white;
         }
         .btn-gradient:hover {
-            background: linear-gradient(90deg, #1a202c 20%, #f9c74f 80%);
-            opacity: 1;
+            background: linear-gradient(90deg, #000000 15%, #f9c74f 80%);
         }
         .btn-gradient:focus {
             box-shadow: none;
@@ -100,18 +99,18 @@
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
-                        <label class="form-check-label" for="male">Male</label>
-                        <input class="form-check-input" type="radio" name="gender" id="female" value="female" required>
-                        <label class="form-check-label" for="female">Female</label>
-                    </div>
+                    <select class="form-control" id="gender" name="gender" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="pc_number">PC Number</label>
-                    <input type="number" class="form-control" id="pc_number" name="pc_number" min="1" max="30" required>
+                    <input type="text" class="form-control" id="pc_number" name="pc_number" value="{{ $assignedPCNumbers < 30 ? $assignedPCNumbers + 1 : 'No Assigned PC' }}" readonly>
                 </div>
+
                 <div class="form-group">
                     <label for="rfid">RFID</label>
                     <div class="input-group">
@@ -146,14 +145,15 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
     $(document).ready(function() {
-        let socket = io('http://172.30.109.177:5000');
+        
+        let clientIp = "{{ $clientIp }}";
+        let socket = io('http://' + clientIp + ':5000');
 
         socket.on('connect', function() {
             console.log('Connected to server');

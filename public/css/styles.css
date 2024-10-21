@@ -154,9 +154,11 @@
 #search-input, select.form-control {
     padding: 8px 12px;
     border-radius: 4px;
-    border: 1px solid #ccc; /* Light Gray Border */
-    background-color: #f8f9fa; /* Very Light Gray */
-    color: #333; /* Dark Gray */
+    border: 1px solid #ccc; 
+    background-color: #f8f9fa;
+    color: #333; 
+    width: 250px;
+
 }
 
 #search-input:focus, select.form-control:focus {
@@ -262,11 +264,11 @@
 
 @media (max-width: 992px) {
     .action-bar .btn {
-        padding: 8px 16px; /* Smaller buttons on medium screens */
+        padding: 8px 16px; 
     }
 
     .table, .custom-table {
-        font-size: 12px; /* Adjust font size further */
+        font-size: 12px;
     }
 }
 
@@ -278,29 +280,169 @@
 
     .action-bar .btn {
         margin-top: 10px;
-        width: 100%; /* Full width buttons */
+        width: 100%; 
     }
 
     .table, .custom-table {
-        font-size: 10px; /* Smaller text in tables */
+        font-size: 10px; 
     }
 
     .custom-table th, .custom-table td {
-        width: auto; /* Allow auto width for table cells */
+        width: auto; 
     }
 
     .custom-table th:nth-child(2),
     .custom-table td:nth-child(2) {
-        width: auto; /* Adjust width for second column */
+        width: auto; 
     }
 }
 
 @media (max-width: 576px) {
     .action-bar .btn {
-        padding: 6px 12px; /* Smaller buttons on small screens */
+        padding: 6px 12px; 
     }
 
     .table, .custom-table {
-        font-size: 8px; /* Very small text for smaller devices */
+        font-size: 8px; 
     }
 }
+.form-container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-container {
+    background-color: #e2e1e1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px; 
+    margin-top: 10%;
+}
+
+.btn-gradient {
+    background: linear-gradient(90deg, #000000 80%, #ffc107 15%);
+    color: white;
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 5px;
+    width: 30%;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(90deg, #000000 15%, #f9c74f 80%);
+    color: white;
+}
+
+.btn-gradient-submit {
+    background: linear-gradient(90deg, #000000 80%, #ffc107 15%);
+    color: white;
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 5px;
+}
+
+.btn-gradient-submit:hover {
+    background: linear-gradient(90deg, #000000 15%, #f9c74f 80%);
+    color: white;
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    background: linear-gradient(90deg, #f9c74f 90% ,#000000 10%);
+    color: black;
+}
+h2.text-center {
+    margin-bottom: 20px; 
+}
+.btn-black-gray {
+    background-color: #333; 
+    color: white; 
+    border: none; 
+    transition: background-color 0.3s ease; 
+    
+}
+
+.btn-black-gray:hover {
+    background-color: #555;
+}
+
+.btn-black-gray:focus {
+    box-shadow: none; 
+}
+
+.edits, .deletebtn {
+    background-color: #ffc107; 
+    color: rgb(0, 0, 0);
+    border-radius: 4px;
+    margin-right: 10px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    padding: 3px;
+}
+
+.deletebtn {
+    background-color: #dc3545; 
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    opacity: 0.8;
+}
+
+
+.status-dropdown {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1f1c2c, #928dab); 
+    border: none;
+    cursor: pointer;
+    appearance: none;
+    transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    text-indent: -9999px; 
+    overflow: hidden;
+    margin-left: 20px;
+}
+
+.status-dropdown.active {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+}
+
+.status-dropdown.disabled {
+    background: linear-gradient(135deg, #f31326, #ffc371); 
+}
+
+.status-dropdown:focus {
+    width: auto;
+    height: auto;
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    border: 1px solid #28a745;
+    text-indent: 0;
+}
+
+.status-dropdown option {
+    background: linear-gradient(135deg, #232526, #414345);
+    color: #000000;
+    font-size: 14px;
+    padding: 12px 16px;
+    margin: 4px 0;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.status-dropdown option:hover {
+    background-color: #0fa835;
+    box-shadow: 0 3px 6px rgba(0, 255, 100, 0.3);
+}
+
+

@@ -198,7 +198,7 @@ h2 {
 }
 
 .table tbody td .btn-icon {
-    display: none; /* Removed icons */
+    display: none;
 }
 
 .pagination {
@@ -280,7 +280,6 @@ h2 {
     padding: 0;
 }
 
-/* Dropdown Styles */
 .mb-3 form {
     display: flex;
     align-items: center;
@@ -359,4 +358,15 @@ h2 {
         text-align: left;
         font-weight: bold;
     }
+}
+.btn btn-dark{
+    color:black;
+}
+
+.modal {
+    z-index: 1050; /* This should be the default, but you can increase it */
+}
+
+.modal-backdrop {
+    z-index: 1040; /* Ensure the backdrop is behind the modal */
 }

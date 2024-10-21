@@ -8,10 +8,8 @@
     </x-slot>
 
     <x-slot name="form">
-        <!-- Profile Photo -->
         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
             <div x-data="{photoName: null, photoPreview: null}" class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
                 <input type="file" class="hidden"
                             wire:model="photo"
                             x-ref="photo"

@@ -7,7 +7,7 @@ use App\Models\Schedule;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\Student;
-use App\Models\StudentAttendance; // Ensure this is correct
+use App\Models\StudentAttendance; 
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SchedulesExport;
@@ -23,29 +23,30 @@ class AdminController extends Controller
         $courseCount = Course::count(); 
         $attendancePercentage = $this->getAttendancePercentage(); 
         $studentAttendanceToday = $this->getStudentAttendancePercentageToday();
-
+    
         $faculty_id = $request->input('faculty_id');
+    
         $schedules = Schedule::when($faculty_id, function ($query, $faculty_id) {
             return $query->where('faculty_id', $faculty_id);
-        })->with('course', 'faculty')->get();
-
+        })->where('status', 1) 
+          ->with('course', 'faculty')
+          ->get();
+    
         $monthlyAttendance = $this->getMonthlyAttendanceData();
         
-        // Assuming you want to pass similar data for faculty attendance, student attendance, and system visitors
         $facultyAttendanceData = $this->getAttendanceData('faculty');
         $studentAttendanceData = $this->getAttendanceData('student');
-
+    
         return view('admin.dashboard', compact(
             'schedules', 'faculties', 'facultyCount', 'studentCount', 'courseCount',
             'attendancePercentage', 'faculty_id', 'monthlyAttendance', 'studentAttendanceToday',
             'facultyAttendanceData', 'studentAttendanceData'
         ));
     }
+    
 
     private function getAttendanceData($type)
     {
-        // Sample implementation for fetching data without 'type' column
-        // Assuming you want to fetch attendance data grouped by date
         $data = StudentAttendance::select(
             DB::raw("DATE_FORMAT(entered_at, '%Y-%m-%d') as date"),
             DB::raw('COUNT(id) as count')

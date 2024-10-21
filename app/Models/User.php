@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -23,7 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'first_name', 'middle_name', 'last_name', 'email', 'password', 
-        'phone_number', 'gender', 'date_of_birth', 'role', 'rfid_id', 'google_id', 'user_image',
+        'phone_number', 'gender', 'date_of_birth', 'role', 'rfid_id', 'google_id', 'user_image','status',
     ];
 
     /**

@@ -106,3 +106,18 @@ body {
 .table-container .highlight {
     background-color: #d4edda;
 }
+#messageModal .modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+#messageModal .modal-body {
+    font-size: 16px;
+}#messageModal .modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+#messageModal .modal-body {
+    font-size: 16px;
+}

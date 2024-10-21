@@ -24,7 +24,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone_number' => 'required|string|max:15',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user->first_name = $request->input('first_name');

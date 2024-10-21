@@ -16,7 +16,6 @@ class AddFacultyIdToStudentAttendancesTable extends Migration
         Schema::table('student_attendances', function (Blueprint $table) {
             $table->unsignedBigInteger('faculty_id')->nullable()->after('student_id');
 
-            // Adding the foreign key constraint referencing the users table
             $table->foreign('faculty_id')->references('id')->on('users')->onDelete('set null');
         });
     }

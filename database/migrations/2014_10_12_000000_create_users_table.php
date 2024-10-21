@@ -25,7 +25,9 @@ return new class extends Migration
             $table->date('date_of_birth');
             $table->enum('role', ['admin', 'faculty'])->default('faculty');
             $table->integer('rfid')->unique()->nullable();
+            $table->enum('status', ['Active', 'Disabled', 'Deleted'])->default('Active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

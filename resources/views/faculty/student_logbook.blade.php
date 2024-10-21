@@ -43,38 +43,49 @@
         .table th {
             background-color: #f2f2f2;
         }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <img src="{{ public_path('images/finallogo.png') }}" alt="Logo">
-        <h2>Student Logbook</h2>
+        <img src="{{ public_path('images/logbooklogo.png') }}" alt="Logo">
+        <h2>Mac Laboratory Logbook</h2>
     </div>
     <table class="table">
-        <thead>
-            <tr>
-                <th>Student Number</th>
-                <th>Student Name</th>
-                <th>Program, Year & Section</th>
-                <th>PC Number</th>
-                <th>Faculty</th>
-                <th>Date & Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($studentAttendances as $attendance)
-            <tr>
-                <td>{{ $attendance->student->student_number }}</td>
-                <td>{{ $attendance->student->first_name }} {{ $attendance->student->last_name }}</td>
-                <td>{{ $attendance->student->program }} - {{ $attendance->student->year }}{{ $attendance->student->section }}</td>
-                <td>{{ $attendance->student->pc_number }}</td>
-                <td>
-                {{ getFacultyTitle($attendance->faculty) }} {{ $attendance->faculty->first_name }} {{ $attendance->faculty->last_name ?? 'N/A' }}
-                </td>
-                <td>{{ $attendance->entered_at }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Student Name</th>
+            <th>PC Number</th>
+            <th>Student Number</th>
+            <th>Program, Year & Section</th>
+            <th>Instructor</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($studentAttendances as $attendance)
+        <tr>
+            @if ($attendance->entered_at instanceof \Carbon\Carbon)
+                <td>{{ $attendance->entered_at->format('Y-m-d') }}</td>
+            @endif
+            <td>{{ ucwords(strtolower($attendance->student->first_name)) }} {{ ucwords(strtolower($attendance->student->last_name)) }}</td>
+            <td>{{ $attendance->student->pc_number }}</td>
+            <td>{{ $attendance->student->student_number }}</td>
+            <td>{{ $attendance->student->program }} - {{ $attendance->student->year }} {{ $attendance->student->section }}</td>
+            <td>{{ getFacultyTitle($attendance->faculty) }} {{ ucwords(strtolower($attendance->faculty->first_name)) }} {{ ucwords(strtolower($attendance->faculty->last_name ?? 'N/A')) }}</td>
+            <td>{{ $attendance->entered_at->format('g:i A') }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+    <div class="footer">
+        SYSTEM GENERATED: SIGNATURE IS NOT NEEDED
+    </div>
 </body>
 </html>

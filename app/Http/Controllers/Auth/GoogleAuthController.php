@@ -24,21 +24,21 @@ class GoogleAuthController extends Controller
         try {
             $google_user = Socialite::driver('google')->user();
 
-            // Create Google Client and People Service
             $client = new Google_Client();
             $client->setAccessToken($google_user->token);
             $peopleService = new Google_Service_PeopleService($client);
 
-            // Fetch user profile from Google People API
             $profile = $peopleService->people->get('people/me', ['personFields' => 'names,emailAddresses,birthdays,genders']);
 
             // Handle names
             $names = $profile->getNames();
             $fullName = !empty($names) ? $names[0]->getDisplayName() : 'Unknown User';
             $nameParts = explode(' ', $fullName);
-            $firstName = $nameParts[0] ?? 'Unknown';
-            $lastName = isset($nameParts[1]) ? array_pop($nameParts) : 'Unknown';
-            $middleName = count($nameParts) > 1 ? implode(' ', $nameParts) : null;
+
+            // Combine first name and middle name
+            $firstName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 0, -1)) : $fullName;
+            $lastName = array_pop($nameParts);
+            $middleName = null;
 
             // Handle birthdays
             $birthdays = $profile->getBirthdays();
@@ -48,12 +48,11 @@ class GoogleAuthController extends Controller
             $genders = $profile->getGenders();
             $gender = !empty($genders) ? $genders[0]->getValue() : null;
 
-            // Check if user already exists in the database
+            // User retrieval or registration
             $user = User::where('email', $google_user->getEmail())->first();
-            
+
             if (!$user) {
-                // Redirect to login page with data indicating the user is not registered
-                return redirect()->route('login')
+                return redirect()->route('register')->withErrors(['email' => 'User is not registered yet. Please register to continue.'])
                     ->with('google_user', [
                         'first_name' => $firstName,
                         'middle_name' => $middleName,
@@ -66,23 +65,17 @@ class GoogleAuthController extends Controller
                     ])
                     ->with('register_prompt', true);
             } else {
-                // Only update the user image if user already exists
                 $user->update([
                     'user_image' => $google_user->getAvatar(),
                     'google_id' => $google_user->getId(),
                 ]);
 
-                // Log in the user
                 Auth::login($user);
 
-                // Redirect to the intended location or dashboard
                 return redirect()->intended('dashboard');
             }
         } catch (\Exception $e) {
-            // Log the exception for debugging
             Log::error('Google Auth Error: ' . $e->getMessage());
-            
-            // Redirect to login page with the error message
             return redirect()->route('login')->withErrors(['error' => 'An error occurred during authentication. Please try again.']);
         }
     }

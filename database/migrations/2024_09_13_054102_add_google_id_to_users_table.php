@@ -15,7 +15,7 @@ class AddGoogleIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('google_id')->unique()->nullable();
-            $table->string('user_image')->nullable(); // Store the image path or URL
+            $table->string('user_image')->nullable(); 
         });
     }
 
@@ -23,7 +23,7 @@ class AddGoogleIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('google_id');
-            $table->dropColumn('user_image'); // Drop 'user_image' column in the down method
+            $table->dropColumn('user_image'); 
         });
     }
 

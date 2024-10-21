@@ -24,13 +24,14 @@ Auth::routes();
 
 Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle']);
-Route::post('/verify-email', [RegisterController::class, 'verifyEmail']);
-Route::post('/verify-otp', [RegisterController::class, 'verifyOtp']);
+// Route::post('/verify-email', [RegisterController::class, 'verifyEmail']);
+// Route::post('/verify-otp', [RegisterController::class, 'verifyOtp']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/logout', [LoginController::class, 'login']);
 Route::get('/settings', [UserController::class, 'edit'])->name('settings.edit');
 Route::post('/settings', [UserController::class, 'update'])->name('settings.update');
-
+Route::post('/verify-email', [RegisterController::class, 'verifyEmail'])->name('verify-email');
+Route::post('/verify-otp', [RegisterController::class, 'verifyOtp'])->name('verify-otp');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -54,8 +55,9 @@ Route::middleware(['auth'])->group(function () {
             'store' => 'admin.course.store',
             'edit' => 'admin.course.edit',
             'update' => 'admin.course.update',
-            'destroy' => 'admin.course.destroy',
         ]);
+        Route::delete('/admin/course/{id}', [CourseController::class, 'destroy'])->name('admin.course.destroy');
+
         Route::resource('admin/students', StudentManagementController::class)->names([
             'index' => 'admin.students.index',
             'create' => 'admin.students.create',
@@ -72,14 +74,22 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'admin.schedule.update',
             'destroy' => 'admin.schedule.destroy',
         ]);
+
+        Route::delete('/admin/schedule/{id}', [ScheduleManagementController::class, 'destroy'])->name('admin.schedule.destroy');
         Route::get('schedule-export', [ScheduleManagementController::class, 'export'])->name('admin.schedule.export');
         Route::get('export-pdf', [ScheduleManagementController::class, 'exportPdf'])->name('admin.schedule.exportPdf');
+        Route::post('admin/schedule/useAll', [ScheduleManagementController::class, 'useAll'])->name('admin.schedule.useAll');
+        Route::put('/admin/faculty/{id}/updateStatus', [FacultyManagementController::class, 'updateStatus'])->name('admin.faculty.updateStatus');
 
 
-        // Route for faculty attendance in the admin panel
         Route::get('/admin/attendance', [AttendanceController::class, 'showFacultyAttendance'])->name('admin.attendance');
         Route::get('/admin/attendance/export', [AttendanceController::class, 'exportFacultyAttendance'])->name('attendance.export');
         Route::get('/admin/attendance/export/pdf', [AttendanceController::class, 'exportFacultyAttendancePdf'])->name('attendance.export.pdf');
+        Route::post('admin/students/import', [StudentManagementController::class, 'import'])->name('admin.students.import');
+        Route::post('admin/students/import-pdf', [StudentManagementController::class, 'importPdf'])->name('admin.students.import-pdf');
+        Route::post('/admin/students/preview', [StudentManagementController::class, 'preview'])->name('admin.students.preview');
+        Route::get('/profiles', [ProfileController::class, 'show'])->name('profiles.show');
+        Route::put('/profiles/update', [ProfileController::class, 'update'])->name('profiles.update');
 
 
     });
@@ -92,14 +102,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf');
         Route::post('students/import-pdf', [StudentController::class, 'importPDF'])->name('students.import-pdf'); 
         Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.students');
-        Route::post('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.students.export');
+        Route::post('/attendance/students/export', [AttendanceController::class, 'export'])->name('attendance.students.export');
         Route::post('/attendance/export-logbook-pdf', [AttendanceController::class, 'exportLogbookPdf'])->name('attendance.students.exportPdf');
 
-        // Route for student attendance in the faculty panel
         Route::get('faculty/attendance', [AttendanceController::class, 'showStudentAttendance'])->name('faculty.attendance');
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+       
+
 
     });
     

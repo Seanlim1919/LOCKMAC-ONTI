@@ -31,7 +31,7 @@ return [
     |
     */
 
-    'lifetime' => 10, // Session lifetime in minutes
+    'lifetime' => 60, 
 
 
     'expire_on_close' => false,

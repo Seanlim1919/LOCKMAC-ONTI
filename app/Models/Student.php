@@ -47,4 +47,10 @@ class Student extends Model
     return $this->belongsTo(RFID::class);
     }
 
+    public function attendances()
+    {
+        return $this->hasMany(StudentAttendance::class); // Adjust the class name if necessary
+    }
+
+
 }

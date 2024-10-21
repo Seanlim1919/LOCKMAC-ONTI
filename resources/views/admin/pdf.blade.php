@@ -28,7 +28,7 @@
 
         .header h2 {
             margin: 0;
-            font-size: 18px; /* Adjust font size */
+            font-size: 18px;
             text-align: center;
             flex-grow: 1;
         }
@@ -36,7 +36,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 1in; /* Add space below the table */
+            margin-bottom: 1in;
         }
 
         table, th, td {
@@ -51,6 +51,11 @@
         th {
             background-color: #f2f2f2;
         }
+
+        .date-range {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -58,10 +63,17 @@
         <img src="{{ public_path('images/portraitlogo.png') }}" alt="Logo">
         <h2>Faculty Attendance Report</h2>
     </div>
+
+    <div class="date-range">
+        <strong>Date Range:</strong> {{ \Carbon\Carbon::parse($start_date)->format('m/d/Y') }} - {{ \Carbon\Carbon::parse($end_date)->format('m/d/Y') }}
+    </div>
+
     <table>
         <thead>
             <tr>
                 <th>Faculty Name</th>
+                <th>Course Code</th>
+                <th>Program, Year & Section</th>
                 <th>Date</th>
                 <th>Time In</th>
                 <th>Time Out</th>
@@ -69,12 +81,28 @@
         </thead>
         <tbody>
             @foreach ($facultyAttendances as $attendance)
-                <tr>
-                    <td>{{ $attendance['Faculty Name'] }}</td>
-                    <td>{{ $attendance['Date'] }}</td>
-                    <td>{{ $attendance['Time In'] }}</td>
-                    <td>{{ $attendance['Time Out'] }}</td>
-                </tr>
+                @php
+                    $attendanceDate = \Carbon\Carbon::parse($attendance['Date']);
+                    $startDate = \Carbon\Carbon::parse($start_date);
+                    $endDate = \Carbon\Carbon::parse($end_date);
+                @endphp
+
+                @if ($attendanceDate->between($startDate, $endDate))
+                    <tr>
+                        <td>{{ ucwords(strtolower($attendance['Faculty Name'])) }}</td>
+                        <td>{{ $attendance['Course'] }}</td>
+                        <td>
+                            @if ($attendance['Program'] === 'N/A')
+                                N/A
+                            @else
+                                {{ $attendance['Program'] }} - {{ $attendance['Year'] }}{{ $attendance['Section'] }}
+                            @endif
+                        </td>
+                        <td>{{ $attendanceDate->format('m/d/Y') }}</td>
+                        <td>{{ $attendance['Time In'] }}</td>
+                        <td>{{ $attendance['Time Out'] ?? 'N/A' }}</td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
     </table>

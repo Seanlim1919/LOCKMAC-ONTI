@@ -100,15 +100,13 @@
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" {{ old('gender', strtolower($student->gender)) == 'male' ? 'checked' : '' }} required>
-                        <label class="form-check-label" for="male">Male</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" id="female" value="female" {{ old('gender', strtolower($student->gender)) == 'female' ? 'checked' : '' }} required>
-                        <label class="form-check-label" for="female">Female</label>
-                    </div>
+                    <select class="form-control" id="gender" name="gender" required>
+                        <option value="" disabled>Select Gender</option>
+                        <option value="male" {{ old('gender', strtolower($student->gender)) == 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender', strtolower($student->gender)) == 'female' ? 'selected' : '' }}>Female</option>
+                    </select>
                 </div>
+
 
                 <div class="form-group">
                     <label for="pc_number">PC Number</label>
@@ -151,7 +149,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
 $(document).ready(function() {
-    let socket = io('http://172.30.109.177:5000');
+    let socket = io('http://172.30.153.104:5000');
 
     socket.on('connect', function() {
         console.log('Connected to server');

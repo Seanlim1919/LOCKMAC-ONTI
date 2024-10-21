@@ -17,8 +17,9 @@ class CreateCoursesTable extends Migration
             $table->id();
             $table->string('course_name');
             $table->string('course_code')->unique();
-            $table->string('description');
             $table->enum('program', ['BSIT', 'BLIS', 'BSCS', 'BSIS']);
+            $table->enum('sem_avail', ['First', 'Second']);
+            $table->enum('year_avail', [1, 2, 3, 4]);
             $table->timestamps();
         });
     }

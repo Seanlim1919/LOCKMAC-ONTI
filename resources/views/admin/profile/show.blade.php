@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <!DOCTYPE html>
@@ -6,8 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <!-- Bootstrap CSS -->
+    <title>Admin Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .modal-dialog.modal-lg {
@@ -47,7 +46,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2>User Profile Details</h2>
+        <h2>Admin Profile Details</h2>
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -104,7 +103,7 @@
                     <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('profiles.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -154,6 +153,13 @@
                                     <label for="password_confirmation" class="form-label">Confirm Password</label>
                                     <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                                 </div>
+                                <div class="mb-3">
+                                    <label for="rfid" class="form-label">RFID</label>
+                                    <input type="text" class="form-control" id="rfid" name="rfid" value="{{ old('rfid', Auth::user()->rfid->rfid_code) }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-outline-primary" id="scanRfidButton">Scan RFID</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,9 +171,32 @@
             </div>
         </div>
     </div>
+    
+
+    <div class="modal fade" id="rfidModal" tabindex="-1" role="dialog" aria-labelledby="rfidModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rfidModalLabel">Scan RFID Card</h5>
+                        <button type="button" class="close" id="closeModalButton" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="scanInstructions">Please scan your RFID card...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
         function previewImage(event) {
             const reader = new FileReader();
@@ -177,7 +206,62 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         }
+
+        $(document).ready(function() {
+        @if ($errors->any())
+            $('#errorModal').modal('show'); 
+        @endif
+
+        let clientIp = "{{ $clientIp }}";
+        let socket = io('http://' + clientIp + ':5000');
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('rfid_scanned', function(data) {
+            console.log('RFID Scanned:', data);
+
+            let formattedRfid = data.rfid.replace(/\s+/g, '');
+            formattedRfid = formattedRfid.match(/.{1,2}/g).join(' ');
+            $('#rfidValue').text(formattedRfid);
+            $('#rfid').val(formattedRfid);
+            $('#rfidModal').modal('hide');
+            $('#errorAlert').addClass('d-none');
+            socket.emit('stop_scan');
+        });
+
+        socket.on('rfid_scan_error', function(message) {
+            console.error('RFID Scan Error:', message);
+            $('#errorMessage').text(message);
+            $('#errorAlert').removeClass('d-none');
+            $('#rfidModal').modal('hide');
+            socket.emit('stop_scan');
+        });
+
+        $('#scanRfidButton').click(function() {
+            $('#rfidModal').modal('show');
+            $('#scanInstructions').show().text('Please scan your RFID card...');
+            $('#rfidDisplay').hide();
+            $('#errorAlert').addClass('d-none');
+            socket.emit('start_scan');
+        });
+
+        $('#closeModalButton').click(function() {
+            $('#rfidModal').modal('hide');
+            socket.emit('stop_scan');
+        });
+
+        $('#confirmRfid').click(function() {
+            $('#rfidModal').modal('hide');
+        });
+
+        $('#submitButton').click(function() {
+            $('#registrationForm').submit();
+        });
+    });
     </script>
+
 </body>
 </html>
 @endsection

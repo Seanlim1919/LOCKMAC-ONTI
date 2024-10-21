@@ -41,7 +41,7 @@
                                     <div class="highlight">
                                         <div>
                                             {{ $scheduleForHour->course_code }}<br>
-                                            {{ getFacultyTitle($scheduleForHour->faculty) }} {{ $scheduleForHour->faculty->last_name }}<br>
+                                            {{ ucfirst(strtolower(getFacultyTitle($scheduleForHour->faculty))) }} {{ ucfirst(strtolower($scheduleForHour->faculty->last_name)) }}<br>
                                             {{ $scheduleForHour->program }} - {{ $scheduleForHour->year }}{{ $scheduleForHour->section }}
                                         </div>
                                     </div>
